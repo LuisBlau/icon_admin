@@ -2,7 +2,7 @@
   "name": "ico-admin-app",
   "version": "1.0.0",
   "description": "ICO admin dashboard",
-  "homepage": ".",
+  "homepage": "/admin/",
   "bugs": {
     "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
   },
@@ -13,7 +13,7 @@
   "license": "MIT",
   "author": "The CoreUI Team (https://github.com/orgs/coreui/people)",
   "scripts": {
-    "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
+    "build": "cross-env GENERATE_SOURCEMAP=false react-app-rewired build",
     "changelog": "auto-changelog --starting-version 4.4.0 --commit-limit false --hide-credit",
     "eject": "react-scripts eject",
     "lint": "eslint \"src/**/*.js\"",

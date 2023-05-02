@@ -1,6 +1,6 @@
 export const ETHERSCAN_API_KEY = "DG76AI9VN8G3QZ15XRF97WXRGR6K17UGA9"
-export const CROWDSALE_ADDRESS = "0x9244781732c7a17Af002e682359b2EcCCFe088B8"
-export const CROWDSALE_TOKEN_ADDRESS = "0x346cf611aD5C56ab9549057716E02531efE03b97"
+export const CROWDSALE_ADDRESS = "0x4e25766fDb1f881a4dD0988AaeF5807d92FD94b1"
+export const CROWDSALE_TOKEN_ADDRESS = "0x2e271b7395F0Ef967ddda7310443ccdad782BAa9"
 export const CROWDSALE_ABI = [
   {
     "inputs": [
@@ -427,6 +427,19 @@ export const CROWDSALE_ABI = [
   {
     "inputs": [],
     "name": "fundsRaised",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLatestETHPrice",
     "outputs": [
       {
         "internalType": "uint256",

@@ -10,7 +10,7 @@ import {
 
 const getCrowdSaleReader = () => {
   // console.log("ETHERSCAN_API_KEY", ETHERSCAN_API_KEY);
-  const  provider = new ethers.providers.EtherscanProvider(chains.ETHEREUM_GOERLI, ETHERSCAN_API_KEY)
+  const  provider = new ethers.providers.EtherscanProvider(chains.ETHEREUM_SEPOLIA, ETHERSCAN_API_KEY)
   const contract = new ethers.Contract(CROWDSALE_ADDRESS, CROWDSALE_ABI, provider)
   return contract
 }
@@ -25,7 +25,7 @@ const getCrowdSaleWriter = async () => {
 
 const getCrowdSaleTokenReader = () => {
   // console.log("ETHERSCAN_API_KEY2", ETHERSCAN_API_KEY);
-  const  provider = new ethers.providers.EtherscanProvider(chains.ETHEREUM_GOERLI, ETHERSCAN_API_KEY)
+  const  provider = new ethers.providers.EtherscanProvider(chains.ETHEREUM_SEPOLIA, ETHERSCAN_API_KEY)
   const contract = new ethers.Contract(CROWDSALE_TOKEN_ADDRESS, CROWDSALE_TOKEN_ABI, provider)
   return contract
 }
@@ -40,7 +40,7 @@ const getCrowdSaleTokenWriter = async () => {
 
 export const getHistory = async () => {
   // console.log("ETHERSCAN_API_KEY3", ETHERSCAN_API_KEY);
-  const provider = new ethers.providers.EtherscanProvider(chains.ETHEREUM_GOERLI,ETHERSCAN_API_KEY);
+  const provider = new ethers.providers.EtherscanProvider(chains.ETHEREUM_SEPOLIA,ETHERSCAN_API_KEY);
   const history = await provider.getHistory(CROWDSALE_ADDRESS);
   return history.reverse()
 }

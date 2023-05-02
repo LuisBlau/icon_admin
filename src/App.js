@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './scss/style.scss'
 import { publicProvider } from 'wagmi/providers/public';
 import { configureChains, createClient, WagmiConfig } from 'wagmi'
-import { goerli } from 'wagmi/chains'
+import { sepolia } from 'wagmi/chains'
 
 import { AuthProvider } from './context/AuthContext'
 import { ErrorBoundary } from './components'
@@ -23,7 +23,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 const APP_NAME = "ICO Admin App";
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [goerli],
+  [sepolia],
   [
     publicProvider({ priority: 1 }),
   ]
