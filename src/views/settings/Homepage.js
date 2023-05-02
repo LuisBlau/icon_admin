@@ -26,6 +26,7 @@ import {
   CNavLink,
   CNavItem,
   CWidgetStatsF,
+  CFormInput
 } from "@coreui/react";
 import CIcon from '@coreui/icons-react'
 import {
@@ -64,6 +65,7 @@ import {
   setAdminPermission,
   removeAdminPermission,
 } from '../../utils/helper'
+import { uploadFile, getSetting, API_URL, saveSetting } from "src/api/api";
 
 const Homepage = () => {
   const { time, start } = useTimer();
@@ -86,6 +88,9 @@ const Homepage = () => {
   const [totalSupply, setTotalSupply] = useState(null)
   const [paused, setPause] = useState(null)
   const { isAuthenticated } = useContext(AuthContext)
+  const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
+  const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
+  const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}});
 
   if (!isAuthenticated) {
     window.location = "/admin"
@@ -206,9 +211,61 @@ const Homepage = () => {
     }
   }, [crowdSaleStatus])
 
-    
-  useEffect(() => {
+  const handleImageSaveBtn = async () => {
+    let imagefile = document.getElementById('formFile');
+    if (imagefile.files.length > 0) {
+      let imageURL = await uploadFile(imagefile.files[0]);
+      setLogoImageURL(`${API_URL}${imageURL}`);
+      let res = await saveSetting({logo: imageURL});
+      setSetting(res);
+    }
+  }
+
+  const handleHowSaveBtn = async () => {
+    let res = await saveSetting({how: setting.how});
+    setSetting(res);
+  }
+
+  const handleAboutSaveBtn = async () => {
+    let res = await saveSetting({about: setting.about});
+    setSetting(res);
+  }
+
+  const handleRoadmapSaveBtn = async () => {
+    let res = await saveSetting({roadmap: setting.roadmap});
+    setSetting(res);
+  }
+
+  const handleWhitepaperSaveBtn = async () => {
+    let res = await saveSetting({whitepaper: setting.whitepaper});
+    setSetting(res);
+  }
+
+  const handleTokenomicsSaveBtn = async () => {
+    let res = await saveSetting({tokenomics: setting.tokenomics});
+    setSetting(res);
+  }
+  const handleFaqSaveBtn = async () => {
+    let res = await saveSetting({faq: setting.faq});
+    setSetting(res);
+  }
+  const handleTeamSaveBtn = async () => {
+    let res = await saveSetting({team: setting.team});
+    setSetting(res);
+  }
+  const handleSubscribeSaveBtn = async () => {
+    let res = await saveSetting({subscribe: setting.subscribe});
+    setSetting(res);
+  }
+  const handleContactSaveBtn = async () => {
+    let res = await saveSetting({contact: setting.contact});
+    setSetting(res);
+  }
+  useEffect(async () => {
     start();
+    let res = await getSetting();
+    setSetting(res);
+    setLogoImageURL(res.logo ? `${API_URL}${res.logo}` : '/images/react400.jpg');
   }, []);
 
   useEffect(() => {
@@ -337,13 +394,24 @@ const Homepage = () => {
             <CRow>
               <CCol sm="auto">
               <CCard style={{ width: '18rem' }}>
-                <CCardImage orientation="top" src="/images/react400.jpg" />
+                <CCardImage orientation="top" src={logoImageURL} />
                 <CCardBody>
                   <CCardTitle>Logo Image</CCardTitle>
                   <CCardText>
                     Please upload a site logo here.
                   </CCardText>
-                  <CButton href="#" color="success" variant="outline">Upload</CButton>
+                  <CButton color="success" variant="outline" onClick={() => {document.getElementById('formFile').click()}}>Upload</CButton>
+                  <CFormInput
+                    type="file"
+                    id="formFile"
+                    name="formFile"
+                    style={{display: 'none'}}
+                    onChange={() => {
+                      setLogoImageFileName(document.getElementById('formFile')?.files[0]?.name??'Not selected');
+                      setLogoImageURL(URL.createObjectURL(document.getElementById('formFile')?.files[0]));
+                    }}
+                  />
+                  <div>{logoImageFileName}</div>
                 </CCardBody>
               </CCard>
               </CCol>
@@ -351,7 +419,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleImageSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -390,25 +458,50 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="about_ico_special_title" id="about_ico_special_title" placeholder="ex. About Crypto eComerce" />
+                <Input
+                  type="text"
+                  name="about_ico_special_title"
+                  id="about_ico_special_title"
+                  placeholder="ex. About Crypto eComerce"
+                  value={setting.about?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, about: {...setting.about, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="about_ico_title" id="about_ico_title" placeholder="ex. Decenteralized Crypto eComerce" />
+                <Input
+                  type="text"
+                  name="about_ico_title"
+                  id="about_ico_title"
+                  placeholder="ex. Decenteralized Crypto eComerce"
+                  value={setting.about?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, about: {...setting.about, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="about_ico_description" id="about_ico_description" rows="8" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at dictum risus, non suscipit arcu. Quisque aliquam posuere tortor, sit amet convallis nunc scelerisque in. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit ipsa ut quasi adipisci voluptates, voluptatibus aliquid alias beatae reprehenderit incidunt iusto laboriosam." />
+                <Input
+                  type="textarea"
+                  name="about_ico_description"
+                  id="about_ico_description"
+                  rows="8"
+                  placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis at dictum risus, non suscipit arcu. Quisque aliquam posuere tortor, sit amet convallis nunc scelerisque in. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit ipsa ut quasi adipisci voluptates, voluptatibus aliquid alias beatae reprehenderit incidunt iusto laboriosam."
+                  value={setting.about?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, about: {...setting.about, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleAboutSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -424,25 +517,50 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="howitworks_special_title" id="howitworks_special_title" placeholder="ex. How To Start" />
+                <Input
+                  type="text"
+                  name="howitworks_special_title"
+                  id="howitworks_special_title"
+                  placeholder="ex. How To Start"
+                  value={setting.how?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, how: {...setting.how, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="howitworks_title" id="howitworks_title" placeholder="ex. How It Works" />
+                <Input
+                  type="text"
+                  name="howitworks_title"
+                  id="howitworks_title"
+                  placeholder="ex. How It Works"
+                  value={setting.how?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, how: {...setting.how, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="howitworks_description" id="howitworks_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input
+                  type="textarea"
+                  name="howitworks_description"
+                  id="howitworks_description"
+                  rows="6"
+                  placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                  value={setting.how?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, how: {...setting.how, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleHowSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -451,25 +569,50 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="roadmap_special_title" id="roadmap_special_title" placeholder="ex. ICO Roadmap" />
+                <Input
+                  type="text"
+                  name="roadmap_special_title"
+                  id="roadmap_special_title"
+                  placeholder="ex. ICO Roadmap"
+                  value={setting.roadmap?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, roadmap: {...setting.roadmap, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="roadmap_title" id="roadmap_title" placeholder="ex. Our ICO Roadmap" />
+                <Input
+                  type="text"
+                  name="roadmap_title"
+                  id="roadmap_title"
+                  placeholder="ex. Our ICO Roadmap"
+                  value={setting.roadmap?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, roadmap: {...setting.roadmap, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="roadmap_description" id="roadmap_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input
+                  type="textarea"
+                  name="roadmap_description"
+                  id="roadmap_description"
+                  rows="6"
+                  placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                  value={setting.roadmap?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, roadmap: {...setting.roadmap, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleRoadmapSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -478,25 +621,37 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="whitepaper_special_title" id="whitepaper_special_title" placeholder="ex. Our ICO Whitepaper" />
+                <Input type="text" name="whitepaper_special_title" id="whitepaper_special_title" placeholder="ex. Our ICO Whitepaper"
+                  value={setting.whitepaper?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, whitepaper: {...setting.whitepaper, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="whitepaper_title" id="whitepaper_title" placeholder="ex. Downoad Our Whitepaper" />
+                <Input type="text" name="whitepaper_title" id="whitepaper_title" placeholder="ex. Downoad Our Whitepaper"
+                  value={setting.whitepaper?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, whitepaper: {...setting.whitepaper, subtitle: e.target.value}})}}
+              />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="whitepaper_description" id="whitepaper_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore qui iste asperiores harum maiores praesentium facere ullam blanditiis, odio dolorum. Officia quisquam eaque suscipit facere ducimus, sit quaerat. Numquam, corrupti?" />
+                <Input type="textarea" name="whitepaper_description" id="whitepaper_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore qui iste asperiores harum maiores praesentium facere ullam blanditiis, odio dolorum. Officia quisquam eaque suscipit facere ducimus, sit quaerat. Numquam, corrupti?"
+                  value={setting.whitepaper?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, whitepaper: {...setting.whitepaper, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleWhitepaperSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -505,25 +660,37 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="tokenomics_special_title" id="tokenomics_special_title" placeholder="ex. About Our Token" />
+                <Input type="text" name="tokenomics_special_title" id="tokenomics_special_title" placeholder="ex. About Our Token"
+                  value={setting.tokenomics?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, tokenomics: {...setting.tokenomics, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="tokenomics_title" id="tokenomics_title" placeholder="ex. Our Token Info" />
+                <Input type="text" name="tokenomics_title" id="tokenomics_title" placeholder="ex. Our Token Info"
+                  value={setting.tokenomics?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, tokenomics: {...setting.tokenomics, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="whitepaper_description" id="whitepaper_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input type="textarea" name="whitepaper_description" id="whitepaper_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                  value={setting.tokenomics?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, tokenomics: {...setting.tokenomics, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleTokenomicsSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -532,25 +699,37 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="faq_special_title" id="faq_special_title" placeholder="ex. Token FAQ" />
+                <Input type="text" name="faq_special_title" id="faq_special_title" placeholder="ex. Token FAQ"
+                  value={setting.faq?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, faq: {...setting.faq, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="faq_title" id="faq_title" placeholder="ex. Frequently Questions" />
+                <Input type="text" name="faq_title" id="faq_title" placeholder="ex. Frequently Questions"
+                  value={setting.faq?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, faq: {...setting.faq, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="faq_description" id="faq_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input type="textarea" name="faq_description" id="faq_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                value={setting.faq?.detail}
+                required
+                onChange={(e) => {setSetting({...setting, faq: {...setting.faq, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleFaqSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -559,25 +738,37 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="team_special_title" id="team_special_title" placeholder="ex. Our Team" />
+                <Input type="text" name="team_special_title" id="team_special_title" placeholder="ex. Our Team"
+                  value={setting.team?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, team: {...setting.team, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="team_title" id="team_title" placeholder="ex. Awesome Team" />
+                <Input type="text" name="team_title" id="team_title" placeholder="ex. Awesome Team"
+                  value={setting.team?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, team: {...setting.team, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="team_description" id="team_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input type="textarea" name="team_description" id="team_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                  value={setting.team?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, team: {...setting.team, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleTeamSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -586,19 +777,27 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="subscribe_title" id="subscribe_title" placeholder="ex. Don’t Miss ICO News And Updates!" />
+                <Input type="text" name="subscribe_title" id="subscribe_title" placeholder="ex. Don’t Miss ICO News And Updates!"
+                  value={setting.subscribe?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, subscribe: {...setting.subscribe, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="subscribe_description" id="subscribe_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input type="textarea" name="subscribe_description" id="subscribe_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                  value={setting.subscribe?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, subscribe: {...setting.subscribe, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleSubscribeSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
@@ -607,25 +806,37 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="contactus_special_title" id="contactus_special_title" placeholder="ex. Contact us" />
+                <Input type="text" name="contactus_special_title" id="contactus_special_title" placeholder="ex. Contact us"
+                  value={setting.contact?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, contact: {...setting.contact, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="text" name="contactus_title" id="contactus_title" placeholder="ex. Contact With Us" />
+                <Input type="text" name="contactus_title" id="contactus_title" placeholder="ex. Contact With Us"
+                  value={setting.contact?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, contact: {...setting.contact, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="contactus_description" id="contactus_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo." />
+                <Input type="textarea" name="contactus_description" id="contactus_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                  value={setting.contact?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, contact: {...setting.contact, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleContactSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
