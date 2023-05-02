@@ -90,7 +90,7 @@ const Homepage = () => {
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
-  const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}});
+  const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}});
 
   if (!isAuthenticated) {
     window.location = "/admin"
@@ -261,6 +261,10 @@ const Homepage = () => {
     let res = await saveSetting({contact: setting.contact});
     setSetting(res);
   }
+  const handleMainSaveBtn = async () => {
+    let res = await saveSetting({main: setting.main});
+    setSetting(res);
+  }
   useEffect(async () => {
     start();
     let res = await getSetting();
@@ -429,27 +433,40 @@ const Homepage = () => {
             <CRow>
               <CCol sm="6">
                 <Label for="special_title">Section Heading:</Label>
-                <Input type="text" name="special_title" id="special_title" placeholder="ex. Initial Coin Offering" />
+                <Input type="text" name="special_title" id="special_title" placeholder="ex. Initial Coin Offering"
+                  value={setting.main?.title}
+                  required
+                  onChange={(e) => {setSetting({...setting, main: {...setting.main, title: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
                 <Label for="main_title">Section Title:</Label>
-                <Input type="text" name="main_title" id="main_title" placeholder="ex. Crypto ICO Project" />
+                <Input type="text" name="main_title" id="main_title" placeholder="ex. Crypto ICO Project"
+                  value={setting.main?.subtitle}
+                  required
+                  onChange={(e) => {setSetting({...setting, main: {...setting.main, subtitle: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="6">
                 <Label for="main_description">Section Description:</Label>
-                <Input type="textarea" name="main_description" id="main_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet dolorem blanditiis ad perferendis, labore delectus dolor sit amet, adipisicing elit." />
+                <Input type="textarea" name="main_description" id="main_description" rows="6"
+                  placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet dolorem blanditiis ad perferendis, labore delectus dolor sit amet, adipisicing elit."
+                  value={setting.main?.detail}
+                  required
+                  onChange={(e) => {setSetting({...setting, main: {...setting.main, detail: e.target.value}})}}
+                />
               </CCol>
             </CRow>
             <br></br>
             <CRow>
               <CCol sm="auto">
-                <CButton size="lg">Save</CButton>
+                <CButton size="lg" onClick={handleMainSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
           </CContainer>
