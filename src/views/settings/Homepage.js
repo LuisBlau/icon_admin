@@ -475,6 +475,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="about_ico_special_title">Section Heading:</Label>
                 <Input
                   type="text"
                   name="about_ico_special_title"
@@ -489,6 +490,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="about_ico_title">Section Title:</Label>
                 <Input
                   type="text"
                   name="about_ico_title"
@@ -503,6 +505,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="about_ico_description">Section Description:</Label>
                 <Input
                   type="textarea"
                   name="about_ico_description"
@@ -534,6 +537,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="howitworks_special_title">Section Heading:</Label>
                 <Input
                   type="text"
                   name="howitworks_special_title"
@@ -548,6 +552,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="howitworks_title">Section Title:</Label>
                 <Input
                   type="text"
                   name="howitworks_title"
@@ -562,6 +567,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="howitworks_description">Section Description:</Label>
                 <Input
                   type="textarea"
                   name="howitworks_description"
@@ -586,6 +592,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="roadmap_special_title">Section Heading:</Label>
                 <Input
                   type="text"
                   name="roadmap_special_title"
@@ -600,6 +607,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="roadmap_title">Section Title:</Label>
                 <Input
                   type="text"
                   name="roadmap_title"
@@ -614,6 +622,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="roadmap_description">Section Description:</Label>
                 <Input
                   type="textarea"
                   name="roadmap_description"
@@ -638,6 +647,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="whitepaper_special_title">Section Heading:</Label>
                 <Input type="text" name="whitepaper_special_title" id="whitepaper_special_title" placeholder="ex. Our ICO Whitepaper"
                   value={setting.whitepaper?.title}
                   required
@@ -648,6 +658,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="whitepaper_title">Section Title:</Label>
                 <Input type="text" name="whitepaper_title" id="whitepaper_title" placeholder="ex. Downoad Our Whitepaper"
                   value={setting.whitepaper?.subtitle}
                   required
@@ -658,6 +669,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="whitepaper_description">Section Description:</Label>
                 <Input type="textarea" name="whitepaper_description" id="whitepaper_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolore qui iste asperiores harum maiores praesentium facere ullam blanditiis, odio dolorum. Officia quisquam eaque suscipit facere ducimus, sit quaerat. Numquam, corrupti?"
                   value={setting.whitepaper?.detail}
                   required
@@ -677,6 +689,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="tokenomics_special_title">Section Heading:</Label>
                 <Input type="text" name="tokenomics_special_title" id="tokenomics_special_title" placeholder="ex. About Our Token"
                   value={setting.tokenomics?.title}
                   required
@@ -687,6 +700,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="tokenomics_title">Section Title:</Label>
                 <Input type="text" name="tokenomics_title" id="tokenomics_title" placeholder="ex. Our Token Info"
                   value={setting.tokenomics?.subtitle}
                   required
@@ -697,7 +711,8 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
-                <Input type="textarea" name="whitepaper_description" id="whitepaper_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                <Label for="tokenomics_description">Section Description:</Label>
+                <Input type="textarea" name="tokenomics_description" id="tokenomics_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
                   value={setting.tokenomics?.detail}
                   required
                   onChange={(e) => {setSetting({...setting, tokenomics: {...setting.tokenomics, detail: e.target.value}})}}
@@ -716,6 +731,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="faq_special_title">Section Heading:</Label>
                 <Input type="text" name="faq_special_title" id="faq_special_title" placeholder="ex. Token FAQ"
                   value={setting.faq?.title}
                   required
@@ -726,6 +742,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="faq_title">Section Title:</Label>
                 <Input type="text" name="faq_title" id="faq_title" placeholder="ex. Frequently Questions"
                   value={setting.faq?.subtitle}
                   required
@@ -736,6 +753,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="faq_description">Section Description:</Label>
                 <Input type="textarea" name="faq_description" id="faq_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
                 value={setting.faq?.detail}
                 required
@@ -755,6 +773,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="team_special_title">Section Heading:</Label>
                 <Input type="text" name="team_special_title" id="team_special_title" placeholder="ex. Our Team"
                   value={setting.team?.title}
                   required
@@ -765,6 +784,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="team_title">Section Title:</Label>
                 <Input type="text" name="team_title" id="team_title" placeholder="ex. Awesome Team"
                   value={setting.team?.subtitle}
                   required
@@ -775,6 +795,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="team_description">Section Description:</Label>
                 <Input type="textarea" name="team_description" id="team_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
                   value={setting.team?.detail}
                   required
@@ -794,6 +815,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="subscribe_title">Section Heading:</Label>
                 <Input type="text" name="subscribe_title" id="subscribe_title" placeholder="ex. Don’t Miss ICO News And Updates!"
                   value={setting.subscribe?.title}
                   required
@@ -804,6 +826,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="subscribe_description">Section Description:</Label>
                 <Input type="textarea" name="subscribe_description" id="subscribe_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
                   value={setting.subscribe?.detail}
                   required
@@ -823,6 +846,7 @@ const Homepage = () => {
           <CContainer>
             <CRow>
               <CCol sm="6">
+                <Label for="contactus_special_title">Section Heading:</Label>
                 <Input type="text" name="contactus_special_title" id="contactus_special_title" placeholder="ex. Contact us"
                   value={setting.contact?.title}
                   required
@@ -833,6 +857,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="contactus_title">Section Title:</Label>
                 <Input type="text" name="contactus_title" id="contactus_title" placeholder="ex. Contact With Us"
                   value={setting.contact?.subtitle}
                   required
@@ -843,6 +868,7 @@ const Homepage = () => {
             <br></br>
             <CRow>
               <CCol sm="6">
+                <Label for="contactus_description">Section Description:</Label>
                 <Input type="textarea" name="contactus_description" id="contactus_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
                   value={setting.contact?.detail}
                   required
