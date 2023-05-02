@@ -216,7 +216,7 @@ const Homepage = () => {
     if (imagefile.files.length > 0) {
       let imageURL = await uploadFile(imagefile.files[0]);
       setLogoImageURL(`${API_URL}${imageURL}`);
-      let res = await saveSetting({logo: imageURL});
+      let res = await saveSetting({logo: API_URL + imageURL});
       setSetting(res);
     }
   }
@@ -269,7 +269,7 @@ const Homepage = () => {
     start();
     let res = await getSetting();
     setSetting(res);
-    setLogoImageURL(res.logo ? `${API_URL}${res.logo}` : '/images/react400.jpg');
+    setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
   }, []);
 
   useEffect(() => {
