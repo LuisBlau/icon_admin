@@ -250,6 +250,38 @@ const Homepage = () => {
   }
   /*  ------------------------------  */
 
+  /*  For Token Section */
+  const [tokenModalVisible, setTokenModalVisible] = useState(false);
+  const [tokenBlocks, setTokenBlocks] = useState([]);
+  const [selectedTokenBlock, setSelectedTokenBlock] = useState({_id: null, title: '', text: '', num: ''});
+
+  useEffect(() => {
+    if (!tokenModalVisible) {
+      setSelectedTokenBlock({_id: null, title: '', text: '', num: ''});
+    }
+  }, [tokenModalVisible]);
+
+  const handleTokenBlockSaveBtn = async () => {
+    if (!selectedTokenBlock.title || !selectedTokenBlock.text || !selectedTokenBlock.num) {
+      return;
+    }
+    if (selectedTokenBlock._id) {
+      await updateBlock(selectedTokenBlock, 'token');
+    } else {
+      await addBlock(selectedTokenBlock, 'token');
+    }
+    let res2 = await getBlocks('token');
+    setTokenBlocks(res2);
+    setTokenModalVisible(false);
+  }
+
+  const handleTokenBlockDelBtn = async (id) => {
+    let res1 = await deleteBlock(id, 'token');
+    let res2 = await getBlocks('token');
+    setTokenBlocks(res2);
+  }
+  /*  ------------------------------  */
+
   /* if (!isAuthenticated) {
     window.location = "/admin"
   }
@@ -437,6 +469,8 @@ const Homepage = () => {
     setFaqBlocks(res);
     res = await getBlocks('roadmap');
     setRoadmapBlocks(res);
+    res = await getBlocks('token');
+    setTokenBlocks(res);
   }, []);
 
   /* useEffect(() => {
@@ -962,6 +996,38 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleTokenomicsSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
+            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="sm" color='secondary' onClick={()=>{setTokenModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Title</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    tokenBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
+                        <CTableDataCell>{block.title}</CTableDataCell>
+                        <CTableDataCell>{block.text}</CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedTokenBlock(block); setTokenModalVisible(true);}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleTokenBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
+            </CRow>
           </CContainer>
         </CTabPane>
         <CTabPane visible={activeKey === "FAQ"}>
@@ -1378,6 +1444,44 @@ const Homepage = () => {
           Close
         </CButton>
         <CButton color="primary" onClick={handleRoadmapBlockSaveBtn}>Save</CButton>
+      </CModalFooter>
+      </CModal>
+
+      {/* Token */}
+      <CModal visible={tokenModalVisible} onClose={() => setTokenModalVisible(false)} alignment="center" backdrop='static'>
+      <CModalHeader onClose={() => setTokenModalVisible(false)}>
+        <CModalTitle>Section Block Data</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CFormInput
+          type="text"
+          label="Title"
+          placeholder="ex. What are the objectives of this Token?"
+          required
+          value={selectedTokenBlock?.title}
+          onChange={(e) => {setSelectedTokenBlock({...selectedTokenBlock, title: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text"
+          placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+          required
+          value={selectedTokenBlock?.text}
+          onChange={(e) => {setSelectedTokenBlock({...selectedTokenBlock, text: e.target.value})}}
+        />
+        <CFormInput
+          type="number"
+          label="Order Number"
+          value={selectedTokenBlock?.num}
+          required
+          onChange={(e) => {setSelectedTokenBlock({...selectedTokenBlock, num: e.target.value})}}
+        />
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setTokenModalVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary" onClick={handleTokenBlockSaveBtn}>Save</CButton>
       </CModalFooter>
       </CModal>
       {/* <PermissionModal
