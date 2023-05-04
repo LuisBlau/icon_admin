@@ -48,7 +48,7 @@ import Swal from "sweetalert2";
 import StatsBox from "src/components/StatsBox";
 import { AuthContext } from 'src/context/AuthContext';
 import CustomWidgets from "../widgets/CustomWidget";
-import PermissionModal from "src/components/PermissionModal";
+/* import PermissionModal from "src/components/PermissionModal";
 import MintModal from "src/components/MintModal";
 import {
   getRate,
@@ -72,7 +72,7 @@ import {
   startCrowdSale,
   setAdminPermission,
   removeAdminPermission,
-} from '../../utils/helper';
+} from '../../utils/helper' */
 import {
   uploadFile,
   getSetting,
@@ -104,7 +104,7 @@ const Homepage = () => {
   const [decimals, setDecimals] = useState(null)
   const [totalSupply, setTotalSupply] = useState(null)
   const [paused, setPause] = useState(null)
-  const { isAuthenticated } = useContext(AuthContext)
+  // const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
   const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}});
@@ -187,38 +187,70 @@ const Homepage = () => {
   /*  ------------------------------  */
 
   /*  For Faq Section */
-const [faqModalVisible, setFaqModalVisible] = useState(false);
-const [faqBlocks, setFaqBlocks] = useState([]);
-const [selectedFaqBlock, setSelectedFaqBlock] = useState({_id: null, title: '', text: '', num: ''});
+  const [faqModalVisible, setFaqModalVisible] = useState(false);
+  const [faqBlocks, setFaqBlocks] = useState([]);
+  const [selectedFaqBlock, setSelectedFaqBlock] = useState({_id: null, title: '', text: '', num: ''});
 
-useEffect(() => {
-  if (!faqModalVisible) {
-    setSelectedFaqBlock({_id: null, title: '', text: '', num: ''});
+  useEffect(() => {
+    if (!faqModalVisible) {
+      setSelectedFaqBlock({_id: null, title: '', text: '', num: ''});
+    }
+  }, [faqModalVisible]);
+
+  const handleFaqBlockSaveBtn = async () => {
+    if (!selectedFaqBlock.title || !selectedFaqBlock.text || !selectedFaqBlock.num) {
+      return;
+    }
+    if (selectedFaqBlock._id) {
+      await updateBlock(selectedFaqBlock, 'faq');
+    } else {
+      await addBlock(selectedFaqBlock, 'faq');
+    }
+    let res2 = await getBlocks('faq');
+    setFaqBlocks(res2);
+    setFaqModalVisible(false);
   }
-}, [faqModalVisible]);
 
-const handleFaqBlockSaveBtn = async () => {
-  if (!selectedFaqBlock.title || !selectedFaqBlock.text || !selectedFaqBlock.num) {
-    return;
+  const handleFaqBlockDelBtn = async (id) => {
+    let res1 = await deleteBlock(id, 'faq');
+    let res2 = await getBlocks('faq');
+    setFaqBlocks(res2);
   }
-  if (selectedFaqBlock._id) {
-    await updateBlock(selectedFaqBlock, 'faq');
-  } else {
-    await addBlock(selectedFaqBlock, 'faq');
+  /*  ------------------------------  */
+
+  /*  For Roadmap Section */
+  const [roadmapModalVisible, setRoadmapModalVisible] = useState(false);
+  const [roadmapBlocks, setRoadmapBlocks] = useState([]);
+  const [selectedRoadmapBlock, setSelectedRoadmapBlock] = useState({_id: null, title: '', year: '', monthDate: '', text: ''});
+
+  useEffect(() => {
+    if (!roadmapModalVisible) {
+      setSelectedRoadmapBlock({_id: null, title: '', year: '', monthDate: '', text: ''});
+    }
+  }, [roadmapModalVisible]);
+
+  const handleRoadmapBlockSaveBtn = async () => {
+    if (!selectedRoadmapBlock.title || !selectedRoadmapBlock.year || !selectedRoadmapBlock.monthDate || !selectedRoadmapBlock.text) {
+      return;
+    }
+    if (selectedRoadmapBlock._id) {
+      await updateBlock(selectedRoadmapBlock, 'roadmap');
+    } else {
+      await addBlock(selectedRoadmapBlock, 'roadmap');
+    }
+    let res2 = await getBlocks('roadmap');
+    setRoadmapBlocks(res2);
+    setRoadmapModalVisible(false);
   }
-  let res2 = await getBlocks('faq');
-  setFaqBlocks(res2);
-  setFaqModalVisible(false);
-}
 
-const handleFaqBlockDelBtn = async (id) => {
-  let res1 = await deleteBlock(id, 'faq');
-  let res2 = await getBlocks('faq');
-  setFaqBlocks(res2);
-}
-/*  ------------------------------  */
+  const handleRoadmapBlockDelBtn = async (id) => {
+    let res1 = await deleteBlock(id, 'roadmap');
+    let res2 = await getBlocks('roadmap');
+    setRoadmapBlocks(res2);
+  }
+  /*  ------------------------------  */
 
-  if (!isAuthenticated) {
+  /* if (!isAuthenticated) {
     window.location = "/admin"
   }
 
@@ -313,7 +345,7 @@ const handleFaqBlockDelBtn = async (id) => {
         break
     }
     setVisible(false)
-  }, [mTitle])
+  }, [mTitle]) */
 
   const handleStart = useCallback(async () => {
     if (crowdSaleStatus) return
@@ -393,7 +425,7 @@ const handleFaqBlockDelBtn = async (id) => {
   }
 
   useEffect(async () => {
-    start();
+    // start();
     let res = await getSetting();
     setSetting(res);
     setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
@@ -403,9 +435,11 @@ const handleFaqBlockDelBtn = async (id) => {
     setContactBlocks(res);
     res = await getBlocks('faq');
     setFaqBlocks(res);
+    res = await getBlocks('roadmap');
+    setRoadmapBlocks(res);
   }, []);
 
-  useEffect(() => {
+  /* useEffect(() => {
     (async () => {
       if (time % 5 === 0) {
         const allPromise = Promise.all([
@@ -447,7 +481,7 @@ const handleFaqBlockDelBtn = async (id) => {
       setDecimals(res.decimals)
       setOwner(res.owner)
     })
-  }, [])
+  }, []) */
 
   return (
     <div>
@@ -807,6 +841,42 @@ const handleFaqBlockDelBtn = async (id) => {
               <CCol sm="auto">
                 <CButton size="lg" onClick={handleRoadmapSaveBtn}>Save</CButton>
               </CCol>
+            </CRow>
+            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="sm" color='secondary' onClick={()=>{setRoadmapModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Title</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Year</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Month & Date</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    roadmapBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{index+1}</CTableHeaderCell>
+                        <CTableDataCell>{block.title}</CTableDataCell>
+                        <CTableDataCell>{block.year}</CTableDataCell>
+                        <CTableDataCell>{block.monthDate}</CTableDataCell>
+                        <CTableDataCell>{block.text}</CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedRoadmapBlock(block); setRoadmapModalVisible(true);}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleRoadmapBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
             </CRow>
           </CContainer>
         </CTabPane>
@@ -1267,7 +1337,50 @@ const handleFaqBlockDelBtn = async (id) => {
         <CButton color="primary" onClick={handleFaqBlockSaveBtn}>Save</CButton>
       </CModalFooter>
       </CModal>
-      <PermissionModal
+      {/* Roadmap */}
+      <CModal visible={roadmapModalVisible} onClose={() => setRoadmapModalVisible(false)} alignment="center" backdrop='static'>
+      <CModalHeader onClose={() => setRoadmapModalVisible(false)}>
+        <CModalTitle>Section Block Data</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CFormInput
+          type="text"
+          label="Title"
+          placeholder="ex. Listing to the major exchanges"
+          required
+          value={selectedRoadmapBlock?.title}
+          onChange={(e) => {setSelectedRoadmapBlock({...selectedRoadmapBlock, title: e.target.value})}}
+        />
+        <CFormInput
+          type="number"
+          label="Year"
+          value={selectedRoadmapBlock?.year}
+          required
+          onChange={(e) => {setSelectedRoadmapBlock({...selectedRoadmapBlock, year: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Month & Date"
+          value={selectedRoadmapBlock?.monthDate}
+          required
+          onChange={(e) => {setSelectedRoadmapBlock({...selectedRoadmapBlock, monthDate: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text"
+          value={selectedRoadmapBlock?.text}
+          required
+          onChange={(e) => {setSelectedRoadmapBlock({...selectedRoadmapBlock, text: e.target.value})}}
+        />
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setRoadmapModalVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary" onClick={handleRoadmapBlockSaveBtn}>Save</CButton>
+      </CModalFooter>
+      </CModal>
+      {/* <PermissionModal
         visible={visible}
         title={mTitle}
         handleSubmit={handleSubmit}
@@ -1277,7 +1390,7 @@ const handleFaqBlockDelBtn = async (id) => {
         visible={mintVisible}
         handleSubmit={handleMint}
         hanldeClose={() => setMintVisible(false)}
-      />
+      /> */}
     </div>
   );
 };
