@@ -282,6 +282,51 @@ const Homepage = () => {
   }
   /*  ------------------------------  */
 
+  /*  For Team Section */
+  const [teamModalVisible, setTeamModalVisible] = useState(false);
+  const [teamBlocks, setTeamBlocks] = useState([]);
+  const [selectedTeamBlock, setSelectedTeamBlock] = useState({_id: null, title: '', text: '', num: '', img: null});
+  const [teamBlockImgFileName, setTeamBlockImgFileName] = useState('Not selected');
+  const [teamBlockImgURL, setTeamBlockImgURL] = useState('/images/react400.jpg');
+
+  useEffect(() => {
+    if (!teamModalVisible) {
+      setSelectedTeamBlock({_id: null, title: '', text: '', num: '', img: null});
+      setTeamBlockImgURL(null);
+      setTeamBlockImgFileName('Not selected');
+    }
+  }, [teamModalVisible]);
+
+  const handleTeamBlockSaveBtn = async () => {
+    if (!selectedTeamBlock.num || !selectedTeamBlock.title || !selectedTeamBlock.text || (teamBlockImgFileName === "Not selected" && !selectedTeamBlock.img)) {
+      return;
+    }
+    let imageURL = selectedTeamBlock.img;
+    if (teamBlockImgFileName !== "Not selected") {
+      let imagefile = document.getElementById('teamBlockImg');
+      if (imagefile.files.length > 0) {
+        imageURL = await uploadFile(imagefile.files[0]);
+        setTeamBlockImgURL(`${API_URL}${imageURL}`);
+        imageURL = `${API_URL}${imageURL}`;
+      }
+    }
+    if (selectedTeamBlock._id) {
+      await updateBlock({...selectedTeamBlock, img: imageURL}, 'team');
+    } else {
+      await addBlock({...selectedTeamBlock, img: imageURL}, 'team');
+    }
+    let res2 = await getBlocks('team');
+    setTeamBlocks(res2);
+    setTeamModalVisible(false);
+  }
+
+  const handleTeamBlockDelBtn = async (id) => {
+    let res1 = await deleteBlock(id, 'team');
+    let res2 = await getBlocks('team');
+    setTeamBlocks(res2);
+  }
+  /*  ------------------------------  */
+
   /* if (!isAuthenticated) {
     window.location = "/admin"
   }
@@ -471,6 +516,8 @@ const Homepage = () => {
     setRoadmapBlocks(res);
     res = await getBlocks('token');
     setTokenBlocks(res);
+    res = await getBlocks('team');
+    setTeamBlocks(res);
   }, []);
 
   /* useEffect(() => {
@@ -1144,6 +1191,40 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleTeamSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
+            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="sm" color='secondary' onClick={()=>{setTeamModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Image</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Title</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    teamBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
+                        <CTableDataCell><img src={block.img} height={30}></img></CTableDataCell>
+                        <CTableDataCell>{block.title}</CTableDataCell>
+                        <CTableDataCell>{block.text}</CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedTeamBlock(block); setTeamModalVisible(true); setTeamBlockImgURL(block.img)}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleTeamBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
+            </CRow>
           </CContainer>
         </CTabPane>
         <CTabPane visible={activeKey === "Subscribe"}>
@@ -1484,6 +1565,63 @@ const Homepage = () => {
         <CButton color="primary" onClick={handleTokenBlockSaveBtn}>Save</CButton>
       </CModalFooter>
       </CModal>
+
+      {/* Team */}
+      <CModal visible={teamModalVisible} onClose={() => setTeamModalVisible(false)} alignment="center" backdrop='static'>
+      <CModalHeader onClose={() => setTeamModalVisible(false)}>
+        <CModalTitle>Section Block Data</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+          <CCard>
+            <CCardImage orientation="top" src={teamBlockImgURL} />
+            <CCardBody>
+              <CButton color="success" variant="outline" onClick={() => {document.getElementById('teamBlockImg').click()}}>Select Image</CButton>
+              <CFormInput
+                type="file"
+                id="teamBlockImg"
+                name="teamBlockImg"
+                required
+                style={{display: 'none'}}
+                onChange={() => {
+                  setTeamBlockImgFileName(document.getElementById('teamBlockImg')?.files[0]?.name??'Not selected');
+                  setTeamBlockImgURL(URL.createObjectURL(document.getElementById('teamBlockImg')?.files[0]));
+                }}
+              />
+              <div>{teamBlockImgFileName}</div>
+            </CCardBody>
+          </CCard>
+        <CFormInput
+          type="text"
+          label="Title"
+          placeholder="ex. Register New Account"
+          required
+          value={selectedTeamBlock?.title}
+          onChange={(e) => {setSelectedTeamBlock({...selectedTeamBlock, title: e.target.value})}}
+        />
+        <CFormTextarea
+          type="text"
+          label="Text"
+          placeholder="ex. Lorem ipsum dolor sit amet..."
+          required
+          value={selectedTeamBlock?.text}
+          onChange={(e) => {setSelectedTeamBlock({...selectedTeamBlock, text: e.target.value})}}
+        />
+        <CFormInput
+          type="number"
+          label="Order Number"
+          value={selectedTeamBlock?.num}
+          required
+          onChange={(e) => {setSelectedTeamBlock({...selectedTeamBlock, num: e.target.value})}}
+        />
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setTeamModalVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary" onClick={handleTeamBlockSaveBtn}>Save</CButton>
+      </CModalFooter>
+      </CModal>
+
       {/* <PermissionModal
         visible={visible}
         title={mTitle}
