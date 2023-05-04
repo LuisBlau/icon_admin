@@ -57,13 +57,13 @@ export const saveSetting = async (payload) => {
     return res.json();
 };
 
-/* For How */
-export const getHowBlocks = async () => {
-    let res = await fetch(`${API_URL}/ico/sections/how`);
+/* For Blocks */
+export const getBlocks = async (name) => {
+    let res = await fetch(`${API_URL}/ico/sections/${name}`);
     return res.json();
 }
 
-export const addHowBlock = async (payload) => {
+export const addBlock = async (payload, name) => {
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -71,11 +71,11 @@ export const addHowBlock = async (payload) => {
         },
         body: JSON.stringify(payload)
     };
-    let res = await fetch(`${API_URL}/ico/sections/how`, requestOptions);
+    let res = await fetch(`${API_URL}/ico/sections/${name}`, requestOptions);
     return res.json();
 };
 
-export const updateHowBlock = async (payload) => {
+export const updateBlock = async (payload, name) => {
     const requestOptions = {
         method: 'PUT',
         headers: {
@@ -83,52 +83,14 @@ export const updateHowBlock = async (payload) => {
         },
         body: JSON.stringify(payload)
     };
-    let res = await fetch(`${API_URL}/ico/sections/how/${payload._id}`, requestOptions);
+    let res = await fetch(`${API_URL}/ico/sections/${name}/${payload._id}`, requestOptions);
     return res.json();
 };
 
-export const deleteHowBlock = async (id) => {
+export const deleteBlock = async (id, name) => {
     const requestOptions = {
         method: 'DELETE'
     };
-    let res = await fetch(`${API_URL}/ico/sections/how/${id}`, requestOptions);
-    return res.json();
-}
-
-/* For Contact */
-export const getContactBlocks = async () => {
-    let res = await fetch(`${API_URL}/ico/sections/contact`);
-    return res.json();
-}
-
-export const addContactBlock = async (payload) => {
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    };
-    let res = await fetch(`${API_URL}/ico/sections/contact`, requestOptions);
-    return res.json();
-};
-
-export const updateContactBlock = async (payload) => {
-    const requestOptions = {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-    };
-    let res = await fetch(`${API_URL}/ico/sections/contact/${payload._id}`, requestOptions);
-    return res.json();
-};
-
-export const deleteContactBlock = async (id) => {
-    const requestOptions = {
-        method: 'DELETE'
-    };
-    let res = await fetch(`${API_URL}/ico/sections/contact/${id}`, requestOptions);
+    let res = await fetch(`${API_URL}/ico/sections/${name}/${id}`, requestOptions);
     return res.json();
 }

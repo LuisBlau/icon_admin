@@ -78,14 +78,10 @@ import {
   getSetting,
   API_URL,
   saveSetting,
-  getHowBlocks,
-  deleteHowBlock,
-  addHowBlock,
-  updateHowBlock,
-  getContactBlocks,
-  deleteContactBlock,
-  addContactBlock,
-  updateContactBlock
+  getBlocks,
+  deleteBlock,
+  addBlock,
+  updateBlock
 } from "src/api/api";
 
 const Homepage = () => {
@@ -142,18 +138,18 @@ const Homepage = () => {
       }
     }
     if (selectedHowBlock._id) {
-      await updateHowBlock({...selectedHowBlock, img: imageURL});
+      await updateBlock({...selectedHowBlock, img: imageURL}, 'how');
     } else {
-      await addHowBlock({...selectedHowBlock, img: imageURL});
+      await addBlock({...selectedHowBlock, img: imageURL}, 'how');
     }
-    let res2 = await getHowBlocks();
+    let res2 = await getBlocks('how');
     setHowBlocks(res2);
     setHowModalVisible(false);
   }
 
   const handleHowBlockDelBtn = async (id) => {
-    let res1 = await deleteHowBlock(id);
-    let res2 = await getHowBlocks();
+    let res1 = await deleteBlock(id, 'how');
+    let res2 = await getBlocks('how');
     setHowBlocks(res2);
   }
   /*  ------------------------------  */
@@ -174,21 +170,53 @@ const Homepage = () => {
       return;
     }
     if (selectedContactBlock._id) {
-      await updateContactBlock(selectedContactBlock);
+      await updateBlock(selectedContactBlock, 'contact');
     } else {
-      await addContactBlock(selectedContactBlock);
+      await addBlock(selectedContactBlock, 'contact');
     }
-    let res2 = await getContactBlocks();
+    let res2 = await getBlocks('contact');
     setContactBlocks(res2);
     setContactModalVisible(false);
   }
 
   const handleContactBlockDelBtn = async (id) => {
-    let res1 = await deleteContactBlock(id);
-    let res2 = await getContactBlocks();
+    let res1 = await deleteBlock(id, 'contact');
+    let res2 = await getBlocks('contact');
     setContactBlocks(res2);
   }
   /*  ------------------------------  */
+
+  /*  For Faq Section */
+const [faqModalVisible, setFaqModalVisible] = useState(false);
+const [faqBlocks, setFaqBlocks] = useState([]);
+const [selectedFaqBlock, setSelectedFaqBlock] = useState({_id: null, title: '', text: '', num: ''});
+
+useEffect(() => {
+  if (!faqModalVisible) {
+    setSelectedFaqBlock({_id: null, title: '', text: '', num: ''});
+  }
+}, [faqModalVisible]);
+
+const handleFaqBlockSaveBtn = async () => {
+  if (!selectedFaqBlock.title || !selectedFaqBlock.text || !selectedFaqBlock.num) {
+    return;
+  }
+  if (selectedFaqBlock._id) {
+    await updateBlock(selectedFaqBlock, 'faq');
+  } else {
+    await addBlock(selectedFaqBlock, 'faq');
+  }
+  let res2 = await getBlocks('faq');
+  setFaqBlocks(res2);
+  setFaqModalVisible(false);
+}
+
+const handleFaqBlockDelBtn = async (id) => {
+  let res1 = await deleteBlock(id, 'faq');
+  let res2 = await getBlocks('faq');
+  setFaqBlocks(res2);
+}
+/*  ------------------------------  */
 
   if (!isAuthenticated) {
     window.location = "/admin"
@@ -369,10 +397,12 @@ const Homepage = () => {
     let res = await getSetting();
     setSetting(res);
     setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
-    res = await getHowBlocks();
+    res = await getBlocks('how');
     setHowBlocks(res);
-    res = await getContactBlocks();
+    res = await getBlocks('contact');
     setContactBlocks(res);
+    res = await getBlocks('faq');
+    setFaqBlocks(res);
   }, []);
 
   useEffect(() => {
@@ -904,6 +934,38 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleFaqSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
+            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="sm" color='secondary' onClick={()=>{setFaqModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Title</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    faqBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
+                        <CTableDataCell>{block.title}</CTableDataCell>
+                        <CTableDataCell>{block.text}</CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedFaqBlock(block); setFaqModalVisible(true);}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleFaqBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
+            </CRow>
           </CContainer>
         </CTabPane>
         <CTabPane visible={activeKey === "Team"}>
@@ -1166,6 +1228,44 @@ const Homepage = () => {
           </CButton>
           <CButton color="primary" onClick={handleContactBlockSaveBtn}>Save</CButton>
         </CModalFooter>
+      </CModal>
+
+      {/* Faq */}
+      <CModal visible={faqModalVisible} onClose={() => setFaqModalVisible(false)} alignment="center" backdrop='static'>
+      <CModalHeader onClose={() => setFaqModalVisible(false)}>
+        <CModalTitle>Section Block Data</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CFormInput
+          type="text"
+          label="Title"
+          placeholder="ex. What are the objectives of this Token?"
+          required
+          value={selectedFaqBlock?.title}
+          onChange={(e) => {setSelectedFaqBlock({...selectedFaqBlock, title: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text"
+          placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+          required
+          value={selectedFaqBlock?.text}
+          onChange={(e) => {setSelectedFaqBlock({...selectedFaqBlock, text: e.target.value})}}
+        />
+        <CFormInput
+          type="number"
+          label="Order Number"
+          value={selectedFaqBlock?.num}
+          required
+          onChange={(e) => {setSelectedFaqBlock({...selectedFaqBlock, num: e.target.value})}}
+        />
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setFaqModalVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary" onClick={handleFaqBlockSaveBtn}>Save</CButton>
+      </CModalFooter>
       </CModal>
       <PermissionModal
         visible={visible}
