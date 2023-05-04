@@ -107,7 +107,7 @@ const Homepage = () => {
   // const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
-  const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}});
+  const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}, footer: {}});
 
   /*  For How Section */
   const [howModalVisible, setHowModalVisible] = useState(false);
@@ -327,6 +327,38 @@ const Homepage = () => {
   }
   /*  ------------------------------  */
 
+  /*  For Footer Section */
+const [footerModalVisible, setFooterModalVisible] = useState(false);
+const [footerBlocks, setFooterBlocks] = useState([]);
+const [selectedFooterBlock, setSelectedFooterBlock] = useState({_id: null, title: '', text1: '', text2: '', text3: '', text4: '', text5: '', classBlock: '', classInfo: '', num: ''});
+
+useEffect(() => {
+  if (!footerModalVisible) {
+    setSelectedFooterBlock({_id: null, title: '', text1: '', text2: '', text3: '', text4: '', text5: '', classBlock: '', classInfo: '', num: ''});
+  }
+}, [footerModalVisible]);
+
+const handleFooterBlockSaveBtn = async () => {
+  if (!selectedFooterBlock.title || !selectedFooterBlock.text1 || !selectedFooterBlock.num) {
+    return;
+  }
+  if (selectedFooterBlock._id) {
+    await updateBlock(selectedFooterBlock, 'footer');
+  } else {
+    await addBlock(selectedFooterBlock, 'footer');
+  }
+  let res2 = await getBlocks('footer');
+  setFooterBlocks(res2);
+  setFooterModalVisible(false);
+}
+
+const handleFooterBlockDelBtn = async (id) => {
+  let res1 = await deleteBlock(id, 'footer');
+  let res2 = await getBlocks('footer');
+  setFooterBlocks(res2);
+}
+/*  ------------------------------  */
+
   /* if (!isAuthenticated) {
     window.location = "/admin"
   }
@@ -500,6 +532,10 @@ const Homepage = () => {
     let res = await saveSetting({main: setting.main});
     setSetting(res);
   }
+  const handleFooterSaveBtn = async () => {
+    let res = await saveSetting({footer: setting.footer});
+    setSetting(res);
+  }
 
   useEffect(async () => {
     // start();
@@ -518,6 +554,8 @@ const Homepage = () => {
     setTokenBlocks(res);
     res = await getBlocks('team');
     setTeamBlocks(res);
+    res = await getBlocks('footer');
+    setFooterBlocks(res);
   }, []);
 
   /* useEffect(() => {
@@ -834,7 +872,7 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleHowSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
-            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+            <CRow style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
                 <CButton size="sm" color='secondary' onClick={()=>{setHowModalVisible(true)}}>Add</CButton>
               </CCol>
@@ -923,7 +961,7 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleRoadmapSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
-            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+            <CRow style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
                 <CButton size="sm" color='secondary' onClick={()=>{setRoadmapModalVisible(true)}}>Add</CButton>
               </CCol>
@@ -1043,7 +1081,7 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleTokenomicsSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
-            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+            <CRow style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
                 <CButton size="sm" color='secondary' onClick={()=>{setTokenModalVisible(true)}}>Add</CButton>
               </CCol>
@@ -1117,7 +1155,7 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleFaqSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
-            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+            <CRow style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
                 <CButton size="sm" color='secondary' onClick={()=>{setFaqModalVisible(true)}}>Add</CButton>
               </CCol>
@@ -1191,7 +1229,7 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleTeamSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
-            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+            <CRow style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
                 <CButton size="sm" color='secondary' onClick={()=>{setTeamModalVisible(true)}}>Add</CButton>
               </CCol>
@@ -1298,7 +1336,7 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleContactSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
-            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+            <CRow style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
                 <CButton size="sm" color='secondary' onClick={()=>{setContactModalVisible(true)}}>Add</CButton>
               </CCol>
@@ -1327,6 +1365,70 @@ const Homepage = () => {
                         <CTableDataCell style={{minWidth: 120}}>
                           <CButton color="info" size="sm" onClick={()=>{setSelectedContactBlock(block); setContactModalVisible(true);}}>Edit</CButton>
                           <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleContactBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
+            </CRow>
+          </CContainer>
+        </CTabPane>
+        <CTabPane visible={activeKey === "Footer"}>
+          <CContainer>
+            <CRow>
+              <CCol sm="6">
+                <Label for="footer_description">Section Description:</Label>
+                <Input type="textarea" name="footer_description" id="footer_description" rows="6" placeholder="ex. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis accumsan nisi Ut ut felis congue nisl hendrerit commodo."
+                value={setting.footer?.detail}
+                required
+                onChange={(e) => {setSetting({...setting, footer: {...setting.footer, detail: e.target.value}})}}
+                />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="auto">
+                <CButton size="lg" onClick={handleFooterSaveBtn}>Save</CButton>
+              </CCol>
+            </CRow>
+            <CRow style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="sm" color='secondary' onClick={()=>{setFooterModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Title</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text1</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text2</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text3</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text4</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text5</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Css For Block</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Css For Info</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    footerBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
+                        <CTableDataCell>{block.title}</CTableDataCell>
+                        <CTableDataCell>{block.text1}</CTableDataCell>
+                        <CTableDataCell>{block.text2}</CTableDataCell>
+                        <CTableDataCell>{block.text3}</CTableDataCell>
+                        <CTableDataCell>{block.text4}</CTableDataCell>
+                        <CTableDataCell>{block.text5}</CTableDataCell>
+                        <CTableDataCell>{block.classBlock}</CTableDataCell>
+                        <CTableDataCell>{block.classInfo}</CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedFooterBlock(block); setFooterModalVisible(true);}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleFooterBlockDelBtn(block._id)}>Delete</CButton>
                         </CTableDataCell>
                       </CTableRow>
                     ))
@@ -1619,6 +1721,92 @@ const Homepage = () => {
           Close
         </CButton>
         <CButton color="primary" onClick={handleTeamBlockSaveBtn}>Save</CButton>
+      </CModalFooter>
+      </CModal>
+
+      {/* Footer */}
+      <CModal visible={footerModalVisible} onClose={() => setFooterModalVisible(false)} alignment="center" backdrop='static'>
+      <CModalHeader onClose={() => setFooterModalVisible(false)}>
+        <CModalTitle>Section Block Data</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CFormInput
+          type="text"
+          label="Title"
+          // placeholder="ex. What are the objectives of this Token?"
+          required
+          value={selectedFooterBlock?.title}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, title: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text1"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.text1}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text1: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text2"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.text2}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text2: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text3"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.text3}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text3: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text4"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.text4}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text4: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Text5"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.text5}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text5: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Css For Block"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.classBlocl}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, classBlocl: e.target.value})}}
+        />
+        <CFormInput
+          type="text"
+          label="Css For Info"
+          placeholder="Enter text"
+          required
+          value={selectedFooterBlock?.classInfo}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, classInfo: e.target.value})}}
+        />
+        <CFormInput
+          type="number"
+          label="Order Number"
+          value={selectedFooterBlock?.num}
+          required
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, num: e.target.value})}}
+        />
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setFooterModalVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary" onClick={handleFooterBlockSaveBtn}>Save</CButton>
       </CModalFooter>
       </CModal>
 
