@@ -11,6 +11,7 @@ import {
   CCardTitle,
   CCol,
   CContainer,
+  CFormTextarea,
   CImage,
   CRow,
   CTable,
@@ -27,6 +28,7 @@ import {
   CNavItem,
   CWidgetStatsF,
   CFormInput,
+  CFormSwitch,
   CModal,
   CModalBody,
   CModalHeader,
@@ -70,8 +72,21 @@ import {
   startCrowdSale,
   setAdminPermission,
   removeAdminPermission,
-} from '../../utils/helper'
-import { uploadFile, getSetting, API_URL, saveSetting, getHowBlocks, deleteHowBlock, addHowBlock, updateHowBlock } from "src/api/api";
+} from '../../utils/helper';
+import {
+  uploadFile,
+  getSetting,
+  API_URL,
+  saveSetting,
+  getHowBlocks,
+  deleteHowBlock,
+  addHowBlock,
+  updateHowBlock,
+  getContactBlocks,
+  deleteContactBlock,
+  addContactBlock,
+  updateContactBlock
+} from "src/api/api";
 
 const Homepage = () => {
   const { time, start } = useTimer();
@@ -95,14 +110,15 @@ const Homepage = () => {
   const [paused, setPause] = useState(null)
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
-  const [howBlockImgFileName, setHowBlockImgFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
-  const [howBlockImgURL, setHowBlockImgURL] = useState('/images/react400.jpg');
   const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}});
+
+  /*  For How Section */
   const [howModalVisible, setHowModalVisible] = useState(false);
   const [howBlocks, setHowBlocks] = useState([]);
   const [selectedHowBlock, setSelectedHowBlock] = useState({_id: null, title: '', text: '', num: '', img: null});
-  // const [editHowBlock, setEditHowBlock] = useState(null);
+  const [howBlockImgFileName, setHowBlockImgFileName] = useState('Not selected');
+  const [howBlockImgURL, setHowBlockImgURL] = useState('/images/react400.jpg');
 
   useEffect(() => {
     if (!howModalVisible) {
@@ -111,6 +127,69 @@ const Homepage = () => {
       setHowBlockImgFileName('Not selected');
     }
   }, [howModalVisible]);
+
+  const handleHowBlockSaveBtn = async () => {
+    if (!selectedHowBlock.num || !selectedHowBlock.title || !selectedHowBlock.text || (howBlockImgFileName === "Not selected" && !selectedHowBlock.img)) {
+      return;
+    }
+    let imageURL = selectedHowBlock.img;
+    if (howBlockImgFileName !== "Not selected") {
+      let imagefile = document.getElementById('howBlockImg');
+      if (imagefile.files.length > 0) {
+        imageURL = await uploadFile(imagefile.files[0]);
+        setHowBlockImgURL(`${API_URL}${imageURL}`);
+        imageURL = `${API_URL}${imageURL}`;
+      }
+    }
+    if (selectedHowBlock._id) {
+      await updateHowBlock({...selectedHowBlock, img: imageURL});
+    } else {
+      await addHowBlock({...selectedHowBlock, img: imageURL});
+    }
+    let res2 = await getHowBlocks();
+    setHowBlocks(res2);
+    setHowModalVisible(false);
+  }
+
+  const handleHowBlockDelBtn = async (id) => {
+    let res1 = await deleteHowBlock(id);
+    let res2 = await getHowBlocks();
+    setHowBlocks(res2);
+  }
+  /*  ------------------------------  */
+
+  /*  For Contact Section */
+  const [contactModalVisible, setContactModalVisible] = useState(false);
+  const [contactBlocks, setContactBlocks] = useState([]);
+  const [selectedContactBlock, setSelectedContactBlock] = useState({_id: null, css: '', field: '', display: '', isMultiline: null, num: ''});
+
+  useEffect(() => {
+    if (!contactModalVisible) {
+      setSelectedContactBlock({_id: null, css: '', field: '', display: '', isMultiline: null, num: ''});
+    }
+  }, [contactModalVisible]);
+
+  const handleContactBlockSaveBtn = async () => {
+    if (!selectedContactBlock.field || !selectedContactBlock.display || !selectedContactBlock.num) {
+      return;
+    }
+    if (selectedContactBlock._id) {
+      await updateContactBlock(selectedContactBlock);
+    } else {
+      await addContactBlock(selectedContactBlock);
+    }
+    let res2 = await getContactBlocks();
+    setContactBlocks(res2);
+    setContactModalVisible(false);
+  }
+
+  const handleContactBlockDelBtn = async (id) => {
+    let res1 = await deleteContactBlock(id);
+    let res2 = await getContactBlocks();
+    setContactBlocks(res2);
+  }
+  /*  ------------------------------  */
+
   if (!isAuthenticated) {
     window.location = "/admin"
   }
@@ -245,29 +324,6 @@ const Homepage = () => {
     setSetting(res);
   }
 
-  const handleHowBlockSaveBtn = async () => {
-    if (!selectedHowBlock.num || !selectedHowBlock.title || !selectedHowBlock.text || (howBlockImgFileName === "Not selected" && !selectedHowBlock.img)) {
-      return;
-    }
-    let imageURL = selectedHowBlock.img;
-    if (howBlockImgFileName !== "Not selected") {
-      let imagefile = document.getElementById('howBlockImg');
-      if (imagefile.files.length > 0) {
-        imageURL = await uploadFile(imagefile.files[0]);
-        setHowBlockImgURL(`${API_URL}${imageURL}`);
-        imageURL = `${API_URL}${imageURL}`;
-      }
-    }
-    if (selectedHowBlock._id) {
-      await updateHowBlock({...selectedHowBlock, img: imageURL});
-    } else {
-      await addHowBlock({...selectedHowBlock, img: imageURL});
-    }
-    let res2 = await getHowBlocks();
-    setHowBlocks(res2);
-    setHowModalVisible(false);
-  }
-
   const handleAboutSaveBtn = async () => {
     let res = await saveSetting({about: setting.about});
     setSetting(res);
@@ -308,12 +364,6 @@ const Homepage = () => {
     setSetting(res);
   }
 
-  const handleHowBlockDelBtn = async (id) => {
-    let res1 = await deleteHowBlock(id);
-    let res2 = await getHowBlocks();
-    setHowBlocks(res2);
-  }
-
   useEffect(async () => {
     start();
     let res = await getSetting();
@@ -321,6 +371,8 @@ const Homepage = () => {
     setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
     res = await getHowBlocks();
     setHowBlocks(res);
+    res = await getContactBlocks();
+    setContactBlocks(res);
   }, []);
 
   useEffect(() => {
@@ -639,7 +691,7 @@ const Homepage = () => {
             </CRow>
             <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
               <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
-                <CButton size="lg" color='secondary' onClick={()=>{setHowModalVisible(true)}}>Add</CButton>
+                <CButton size="sm" color='secondary' onClick={()=>{setHowModalVisible(true)}}>Add</CButton>
               </CCol>
             </CRow>
             <CRow>
@@ -967,9 +1019,47 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleContactSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
+            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="sm" color='secondary' onClick={()=>{setContactModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Filed Name</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Display Name</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Css Classes</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Is Multiline</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    contactBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
+                        <CTableDataCell>{block.field}</CTableDataCell>
+                        <CTableDataCell>{block.display}</CTableDataCell>
+                        <CTableDataCell>{block.css}</CTableDataCell>
+                        <CTableDataCell><CFormSwitch checked={block.isMultiline} disabled /></CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedContactBlock(block); setContactModalVisible(true);}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleContactBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
+            </CRow>
           </CContainer>
         </CTabPane>
       </CTabContent>
+
+      {/* How */}
       <CModal visible={howModalVisible} onClose={() => setHowModalVisible(false)} alignment="center" backdrop='static'>
         <CModalHeader onClose={() => setHowModalVisible(false)}>
           <CModalTitle>Section Block Data</CModalTitle>
@@ -1001,7 +1091,7 @@ const Homepage = () => {
             value={selectedHowBlock?.title}
             onChange={(e) => {setSelectedHowBlock({...selectedHowBlock, title: e.target.value})}}
           />
-          <CFormInput
+          <CFormTextarea
             type="text"
             label="Text"
             placeholder="ex. Lorem ipsum dolor sit amet..."
@@ -1022,6 +1112,59 @@ const Homepage = () => {
             Close
           </CButton>
           <CButton color="primary" onClick={handleHowBlockSaveBtn}>Save</CButton>
+        </CModalFooter>
+      </CModal>
+
+      {/* Contact */}
+      <CModal visible={contactModalVisible} onClose={() => setContactModalVisible(false)} alignment="center" backdrop='static'>
+        <CModalHeader onClose={() => setContactModalVisible(false)}>
+          <CModalTitle>Section Block Data</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CFormInput
+            type="text"
+            label="Field Name"
+            placeholder="ex. email"
+            required
+            value={selectedContactBlock?.field}
+            onChange={(e) => {setSelectedContactBlock({...selectedContactBlock, field: e.target.value})}}
+          />
+          <CFormInput
+            type="text"
+            label="Display Name"
+            placeholder="ex. Email"
+            required
+            value={selectedContactBlock?.display}
+            onChange={(e) => {setSelectedContactBlock({...selectedContactBlock, display: e.target.value})}}
+          />
+          <CFormInput
+            type="text"
+            label="CSS Class"
+            placeholder="ex. col-12 col-md-6"
+            required
+            value={selectedContactBlock?.css}
+            onChange={(e) => {setSelectedContactBlock({...selectedContactBlock, css: e.target.value})}}
+          />
+          <CFormInput
+            type="number"
+            label="Order Number"
+            value={selectedContactBlock?.num}
+            required
+            onChange={(e) => {setSelectedContactBlock({...selectedContactBlock, num: e.target.value})}}
+          />
+          <br/>
+          <CFormSwitch
+            label="Is Multiline"
+            checked={selectedContactBlock?.isMultiline}
+            size="xl"
+            onChange={(e) => {setSelectedContactBlock({...selectedContactBlock, isMultiline: e.target.checked})}}
+          />
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setContactModalVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={handleContactBlockSaveBtn}>Save</CButton>
         </CModalFooter>
       </CModal>
       <PermissionModal
