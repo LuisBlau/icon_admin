@@ -26,7 +26,13 @@ import {
   CNavLink,
   CNavItem,
   CWidgetStatsF,
-  CFormInput
+  CFormInput,
+  CModal,
+  CModalBody,
+  CModalHeader,
+  CModalFooter,
+  CModalTitle,
+  CInputGroup
 } from "@coreui/react";
 import CIcon from '@coreui/icons-react'
 import {
@@ -65,7 +71,7 @@ import {
   setAdminPermission,
   removeAdminPermission,
 } from '../../utils/helper'
-import { uploadFile, getSetting, API_URL, saveSetting } from "src/api/api";
+import { uploadFile, getSetting, API_URL, saveSetting, getHowBlocks, deleteHowBlock, addHowBlock, updateHowBlock } from "src/api/api";
 
 const Homepage = () => {
   const { time, start } = useTimer();
@@ -89,9 +95,22 @@ const Homepage = () => {
   const [paused, setPause] = useState(null)
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
+  const [howBlockImgFileName, setHowBlockImgFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
+  const [howBlockImgURL, setHowBlockImgURL] = useState('/images/react400.jpg');
   const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}});
+  const [howModalVisible, setHowModalVisible] = useState(false);
+  const [howBlocks, setHowBlocks] = useState([]);
+  const [selectedHowBlock, setSelectedHowBlock] = useState({_id: null, title: '', text: '', num: '', img: null});
+  // const [editHowBlock, setEditHowBlock] = useState(null);
 
+  useEffect(() => {
+    if (!howModalVisible) {
+      setSelectedHowBlock({_id: null, title: '', text: '', num: '', img: null});
+      setHowBlockImgURL(null);
+      setHowBlockImgFileName('Not selected');
+    }
+  }, [howModalVisible]);
   if (!isAuthenticated) {
     window.location = "/admin"
   }
@@ -226,6 +245,29 @@ const Homepage = () => {
     setSetting(res);
   }
 
+  const handleHowBlockSaveBtn = async () => {
+    if (!selectedHowBlock.num || !selectedHowBlock.title || !selectedHowBlock.text || (howBlockImgFileName === "Not selected" && !selectedHowBlock.img)) {
+      return;
+    }
+    let imageURL = selectedHowBlock.img;
+    if (howBlockImgFileName !== "Not selected") {
+      let imagefile = document.getElementById('howBlockImg');
+      if (imagefile.files.length > 0) {
+        imageURL = await uploadFile(imagefile.files[0]);
+        setHowBlockImgURL(`${API_URL}${imageURL}`);
+        imageURL = `${API_URL}${imageURL}`;
+      }
+    }
+    if (selectedHowBlock._id) {
+      await updateHowBlock({...selectedHowBlock, img: imageURL});
+    } else {
+      await addHowBlock({...selectedHowBlock, img: imageURL});
+    }
+    let res2 = await getHowBlocks();
+    setHowBlocks(res2);
+    setHowModalVisible(false);
+  }
+
   const handleAboutSaveBtn = async () => {
     let res = await saveSetting({about: setting.about});
     setSetting(res);
@@ -265,11 +307,20 @@ const Homepage = () => {
     let res = await saveSetting({main: setting.main});
     setSetting(res);
   }
+
+  const handleHowBlockDelBtn = async (id) => {
+    let res1 = await deleteHowBlock(id);
+    let res2 = await getHowBlocks();
+    setHowBlocks(res2);
+  }
+
   useEffect(async () => {
     start();
     let res = await getSetting();
     setSetting(res);
     setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
+    res = await getHowBlocks();
+    setHowBlocks(res);
   }, []);
 
   useEffect(() => {
@@ -586,6 +637,40 @@ const Homepage = () => {
                 <CButton size="lg" onClick={handleHowSaveBtn}>Save</CButton>
               </CCol>
             </CRow>
+            <CRow id='adsf' style={{flexDirection: 'row-reverse'}}>
+              <CCol sm="100%" style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                <CButton size="lg" color='secondary' onClick={()=>{setHowModalVisible(true)}}>Add</CButton>
+              </CCol>
+            </CRow>
+            <CRow>
+              <CTable>
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Image</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Title</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Text</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+                <CTableBody>
+                  {
+                    howBlocks.map((block, index) => (
+                      <CTableRow key={index}>
+                        <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
+                        <CTableDataCell><img src={block.img} height={30}></img></CTableDataCell>
+                        <CTableDataCell>{block.title}</CTableDataCell>
+                        <CTableDataCell>{block.text}</CTableDataCell>
+                        <CTableDataCell style={{minWidth: 120}}>
+                          <CButton color="info" size="sm" onClick={()=>{setSelectedHowBlock(block); setHowModalVisible(true); setHowBlockImgURL(block.img)}}>Edit</CButton>
+                          <CButton color="danger" size="sm"style={{marginLeft: 5}} onClick={() => handleHowBlockDelBtn(block._id)}>Delete</CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
+                  }
+                </CTableBody>
+              </CTable>
+            </CRow>
           </CContainer>
         </CTabPane>
         <CTabPane visible={activeKey === "RoadMap"}>
@@ -885,6 +970,60 @@ const Homepage = () => {
           </CContainer>
         </CTabPane>
       </CTabContent>
+      <CModal visible={howModalVisible} onClose={() => setHowModalVisible(false)} alignment="center" backdrop='static'>
+        <CModalHeader onClose={() => setHowModalVisible(false)}>
+          <CModalTitle>Section Block Data</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+            <CCard>
+              <CCardImage orientation="top" src={howBlockImgURL} />
+              <CCardBody>
+                <CButton color="success" variant="outline" onClick={() => {document.getElementById('howBlockImg').click()}}>Select Image</CButton>
+                <CFormInput
+                  type="file"
+                  id="howBlockImg"
+                  name="howBlockImg"
+                  required
+                  style={{display: 'none'}}
+                  onChange={() => {
+                    setHowBlockImgFileName(document.getElementById('howBlockImg')?.files[0]?.name??'Not selected');
+                    setHowBlockImgURL(URL.createObjectURL(document.getElementById('howBlockImg')?.files[0]));
+                  }}
+                />
+                <div>{howBlockImgFileName}</div>
+              </CCardBody>
+            </CCard>
+          <CFormInput
+            type="text"
+            label="Title"
+            placeholder="ex. Register New Account"
+            required
+            value={selectedHowBlock?.title}
+            onChange={(e) => {setSelectedHowBlock({...selectedHowBlock, title: e.target.value})}}
+          />
+          <CFormInput
+            type="text"
+            label="Text"
+            placeholder="ex. Lorem ipsum dolor sit amet..."
+            required
+            value={selectedHowBlock?.text}
+            onChange={(e) => {setSelectedHowBlock({...selectedHowBlock, text: e.target.value})}}
+          />
+          <CFormInput
+            type="number"
+            label="Order Number"
+            value={selectedHowBlock?.num}
+            required
+            onChange={(e) => {setSelectedHowBlock({...selectedHowBlock, num: e.target.value})}}
+          />
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setHowModalVisible(false)}>
+            Close
+          </CButton>
+          <CButton color="primary" onClick={handleHowBlockSaveBtn}>Save</CButton>
+        </CModalFooter>
+      </CModal>
       <PermissionModal
         visible={visible}
         title={mTitle}

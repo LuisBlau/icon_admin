@@ -56,3 +56,40 @@ export const saveSetting = async (payload) => {
     let res = await fetch(`${API_URL}/ico/setting`, requestOptions);
     return res.json();
 };
+
+export const getHowBlocks = async () => {
+    let res = await fetch(`${API_URL}/ico/sections/how`);
+    return res.json();
+}
+
+export const addHowBlock = async (payload) => {
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    };
+    let res = await fetch(`${API_URL}/ico/sections/how`, requestOptions);
+    return res.json();
+};
+
+export const updateHowBlock = async (payload) => {
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    };
+    let res = await fetch(`${API_URL}/ico/sections/how/${payload._id}`, requestOptions);
+    return res.json();
+};
+
+export const deleteHowBlock = async (id) => {
+    const requestOptions = {
+        method: 'DELETE'
+    };
+    let res = await fetch(`${API_URL}/ico/sections/how/${id}`, requestOptions);
+    return res.json();
+}
