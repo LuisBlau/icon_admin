@@ -48,7 +48,7 @@ import Swal from "sweetalert2";
 import StatsBox from "src/components/StatsBox";
 import { AuthContext } from 'src/context/AuthContext';
 import CustomWidgets from "../widgets/CustomWidget";
-/* import PermissionModal from "src/components/PermissionModal";
+import PermissionModal from "src/components/PermissionModal";
 import MintModal from "src/components/MintModal";
 import {
   getRate,
@@ -72,7 +72,7 @@ import {
   startCrowdSale,
   setAdminPermission,
   removeAdminPermission,
-} from '../../utils/helper' */
+} from '../../utils/helper';
 import {
   uploadFile,
   getSetting,
@@ -104,7 +104,7 @@ const Homepage = () => {
   const [decimals, setDecimals] = useState(null)
   const [totalSupply, setTotalSupply] = useState(null)
   const [paused, setPause] = useState(null)
-  // const { isAuthenticated } = useContext(AuthContext)
+  const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
   const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}, footer: {}});
@@ -359,7 +359,7 @@ const handleFooterBlockDelBtn = async (id) => {
 }
 /*  ------------------------------  */
 
-  /* if (!isAuthenticated) {
+  if (!isAuthenticated) {
     window.location = "/admin"
   }
 
@@ -454,7 +454,7 @@ const handleFooterBlockDelBtn = async (id) => {
         break
     }
     setVisible(false)
-  }, [mTitle]) */
+  }, [mTitle])
 
   const handleStart = useCallback(async () => {
     if (crowdSaleStatus) return
@@ -538,7 +538,7 @@ const handleFooterBlockDelBtn = async (id) => {
   }
 
   useEffect(async () => {
-    // start();
+    start();
     let res = await getSetting();
     setSetting(res);
     setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
@@ -558,7 +558,7 @@ const handleFooterBlockDelBtn = async (id) => {
     setFooterBlocks(res);
   }, []);
 
-  /* useEffect(() => {
+  useEffect(() => {
     (async () => {
       if (time % 5 === 0) {
         const allPromise = Promise.all([
@@ -600,7 +600,7 @@ const handleFooterBlockDelBtn = async (id) => {
       setDecimals(res.decimals)
       setOwner(res.owner)
     })
-  }, []) */
+  }, [])
 
   return (
     <div>
@@ -1810,7 +1810,7 @@ const handleFooterBlockDelBtn = async (id) => {
       </CModalFooter>
       </CModal>
 
-      {/* <PermissionModal
+      <PermissionModal
         visible={visible}
         title={mTitle}
         handleSubmit={handleSubmit}
@@ -1820,7 +1820,7 @@ const handleFooterBlockDelBtn = async (id) => {
         visible={mintVisible}
         handleSubmit={handleMint}
         hanldeClose={() => setMintVisible(false)}
-      /> */}
+      />
     </div>
   );
 };
