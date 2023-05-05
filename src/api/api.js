@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:3010";
+export const API_URL = "http://185.207.250.109:3010";
 
 export const authVerify = async (data) => {
     const requestOptions = {
@@ -57,12 +57,13 @@ export const saveSetting = async (payload) => {
     return res.json();
 };
 
-export const getHowBlocks = async () => {
-    let res = await fetch(`${API_URL}/ico/sections/how`);
+/* For Blocks */
+export const getBlocks = async (name) => {
+    let res = await fetch(`${API_URL}/ico/sections/${name}`);
     return res.json();
 }
 
-export const addHowBlock = async (payload) => {
+export const addBlock = async (payload, name) => {
     const requestOptions = {
         method: 'POST',
         headers: {
@@ -70,11 +71,11 @@ export const addHowBlock = async (payload) => {
         },
         body: JSON.stringify(payload)
     };
-    let res = await fetch(`${API_URL}/ico/sections/how`, requestOptions);
+    let res = await fetch(`${API_URL}/ico/sections/${name}`, requestOptions);
     return res.json();
 };
 
-export const updateHowBlock = async (payload) => {
+export const updateBlock = async (payload, name) => {
     const requestOptions = {
         method: 'PUT',
         headers: {
@@ -82,14 +83,14 @@ export const updateHowBlock = async (payload) => {
         },
         body: JSON.stringify(payload)
     };
-    let res = await fetch(`${API_URL}/ico/sections/how/${payload._id}`, requestOptions);
+    let res = await fetch(`${API_URL}/ico/sections/${name}/${payload._id}`, requestOptions);
     return res.json();
 };
 
-export const deleteHowBlock = async (id) => {
+export const deleteBlock = async (id, name) => {
     const requestOptions = {
         method: 'DELETE'
     };
-    let res = await fetch(`${API_URL}/ico/sections/how/${id}`, requestOptions);
+    let res = await fetch(`${API_URL}/ico/sections/${name}/${id}`, requestOptions);
     return res.json();
 }

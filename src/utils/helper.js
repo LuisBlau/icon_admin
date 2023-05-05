@@ -65,6 +65,13 @@ export const getTotalSupply = async () => {
   return totalSupply.toString() / 10**18
 }
 
+export const getMaxTokenNumber = async () => {
+  const contract = getCrowdSaleTokenReader()
+  const maxTokenNumber  =  await contract.MAX_TOKEN_NUMBER()
+  console.log("maxTokenNumber==", maxTokenNumber)
+  return maxTokenNumber.toString()
+}
+
 export const getMintingStatus = async () => {
   const contract = getCrowdSaleTokenReader()
   const paused = await contract.paused()
@@ -181,13 +188,13 @@ export const getTokensSold = async () => {
 
 export const getRaisdFunds = async () => {
   const contract = getCrowdSaleReader()
-  const balance = await contract.fundsRaised()
+  const balance = await contract.fundsRaised(0)
   return balance.toString() / 10**18
 }
 
 export const getForwardedFunds = async () => {
   const contract = getCrowdSaleReader()
-  const balance = await contract.fundsForwarded()
+  const balance = await contract.fundsForwarded(0)
   return balance.toString() / 10**18
 }
 
