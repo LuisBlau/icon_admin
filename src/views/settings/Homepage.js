@@ -505,15 +505,16 @@ const handleFooterBlockDelBtn = async (id) => {
   }
 
   const handleWhitepaperSaveBtn = async () => {
-    let uploadedURL = '';
+    let uploadedURL = setting?.whitepaper?.file??"";
     if (whitepaperFileName !== 'Not selected') {
       let fileEle = document.getElementById('whitepaperFile');
 
       if (fileEle.files.length > 0) {
         uploadedURL = await uploadFile(fileEle.files[0]);
+        uploadedURL = API_URL + uploadedURL;
       }
     }
-    let res = await saveSetting({whitepaper: {...setting.whitepaper, file: API_URL + uploadedURL}});
+    let res = await saveSetting({whitepaper: {...setting.whitepaper, file: uploadedURL}});
     setSetting(res);
   }
 
