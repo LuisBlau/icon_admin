@@ -1,4 +1,4 @@
-export const API_URL = "http://localhost:3010";
+export const API_URL = "http://185.207.250.109:3010";
 
 export const authVerify = async (data) => {
     const requestOptions = {

@@ -41,6 +41,7 @@ import {
   getTokensSold,
   getRaisdFunds,
   getTotalSupply,
+  getMaxTokenNumber,
   getMintingStatus,
   getCurrentTokens,
   getForwardability,
@@ -78,6 +79,7 @@ const Dashboard = () => {
   const [symbol, setSymbol] = useState(null)
   const [decimals, setDecimals] = useState(null)
   const [totalSupply, setTotalSupply] = useState(null)
+  const [maxTokenNumber, setMaxTokenNumber] = useState(null)
   const [paused, setPause] = useState(null)
   const { isAuthenticated } = useContext(AuthContext)
 
@@ -326,6 +328,7 @@ const Dashboard = () => {
           getCrowdSaleStatus(),
           getMintingStatus(),
           getTotalSupply(),
+          getMaxTokenNumber(),
           getHistory(),
         ])
         try {
@@ -339,7 +342,8 @@ const Dashboard = () => {
           setCrowdSaleStatus(lists[6])
           setPause(lists[7])
           setTotalSupply(lists[8])
-          setTransactions(lists[9])
+          setMaxTokenNumber(lists[9])
+          setTransactions(lists[10])
         } catch(e) {
           console.log(e)
         }
@@ -548,7 +552,7 @@ const Dashboard = () => {
             </CCol>
             <CCol xs>  
               <StatsBox
-                value="100000000"
+                value={maxTokenNumber}
                 title="Maxmum Number of Tokens"
                 tokenName="SUMMER"
                 color="success"

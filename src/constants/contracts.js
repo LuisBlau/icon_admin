@@ -1,5 +1,5 @@
 export const ETHERSCAN_API_KEY = "DG76AI9VN8G3QZ15XRF97WXRGR6K17UGA9"
-export const CROWDSALE_ADDRESS = "0x4e25766fDb1f881a4dD0988AaeF5807d92FD94b1"
+export const CROWDSALE_ADDRESS = "0x2Bd2D85eE185dDD5A5771d3b9897587553c75C6A"
 export const CROWDSALE_TOKEN_ADDRESS = "0x2e271b7395F0Ef967ddda7310443ccdad782BAa9"
 export const CROWDSALE_ABI = [
   {
@@ -17,6 +17,26 @@ export const CROWDSALE_ABI = [
       {
         "internalType": "address",
         "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_usdt",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_usdc",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_dai",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_priceFeed",
         "type": "address"
       }
     ],
@@ -412,7 +432,13 @@ export const CROWDSALE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "enum CrowdSale.TokenType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "name": "fundsForwarded",
     "outputs": [
       {
@@ -425,7 +451,13 @@ export const CROWDSALE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "enum CrowdSale.TokenType",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
     "name": "fundsRaised",
     "outputs": [
       {
@@ -661,6 +693,8 @@ export const CROWDSALE_ABI = [
     "type": "receive"
   }
 ]
+//---end of crowdsale -- admin panel -----
+
 export const CROWDSALE_TOKEN_ABI = [
   {
     "inputs": [],
