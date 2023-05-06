@@ -317,7 +317,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     (async () => {
-      if (time % 5 === 0) {
+      if (time % 30 === 0) {
         const allPromise = Promise.all([
           getCurrentTokens(),
           getTokensSold(),

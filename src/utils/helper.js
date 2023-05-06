@@ -68,7 +68,7 @@ export const getTotalSupply = async () => {
 export const getMaxTokenNumber = async () => {
   const contract = getCrowdSaleTokenReader()
   const maxTokenNumber  =  await contract.MAX_TOKEN_NUMBER()
-  console.log("maxTokenNumber==", maxTokenNumber)
+  // console.log("maxTokenNumber==", maxTokenNumber)
   return maxTokenNumber.toString()
 }
 

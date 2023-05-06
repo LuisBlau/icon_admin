@@ -1,18 +1,15 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
-import { FormGroup, Label, Input } from 'reactstrap';
+import React, { useEffect, useState, useContext } from "react";
+import { Label, Input } from 'reactstrap';
 import {
   CButton,
-  CButtonGroup,
   CCard,
   CCardBody,
-  CCardHeader,
   CCardImage,
   CCardText,
   CCardTitle,
   CCol,
   CContainer,
   CFormTextarea,
-  CImage,
   CRow,
   CTable,
   CTableBody,
@@ -20,59 +17,21 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-  CSpinner,
   CTabContent,
   CTabPane,
   CNav,
   CNavLink,
   CNavItem,
-  CWidgetStatsF,
   CFormInput,
   CFormSwitch,
   CModal,
   CModalBody,
   CModalHeader,
   CModalFooter,
-  CModalTitle,
-  CInputGroup
+  CModalTitle
 } from "@coreui/react";
-import CIcon from '@coreui/icons-react'
-import {
-  cilBell,
-  cilChartPie,
-  cilSpeedometer,
-  cilUser,
-} from '@coreui/icons'
-import { useTimer } from 'use-timer';
-import Swal from "sweetalert2";
-import StatsBox from "src/components/StatsBox";
+// import { useTimer } from 'use-timer';
 import { AuthContext } from 'src/context/AuthContext';
-import CustomWidgets from "../widgets/CustomWidget";
-import PermissionModal from "src/components/PermissionModal";
-import MintModal from "src/components/MintModal";
-import {
-  getRate,
-  getHistory,
-  getTokensSold,
-  getRaisdFunds,
-  getTotalSupply,
-  getMintingStatus,
-  getCurrentTokens,
-  getForwardability,
-  getForwardedFunds,
-  getCrowdSaleStatus,
-  getStaticTokenInfo,
-  mint,
-  pause,
-  unPause,
-  setTokenRate,
-  forwardFunds,
-  forwardTokens,
-  terminateCrowdSale,
-  startCrowdSale,
-  setAdminPermission,
-  removeAdminPermission,
-} from '../../utils/helper';
 import {
   uploadFile,
   getSetting,
@@ -85,25 +44,8 @@ import {
 } from "src/api/api";
 
 const Homepage = () => {
-  const { time, start } = useTimer();
-  const [crowdSaleStatus, setCrowdSaleStatus] = useState(null);
-  const [transactions, setTransactions] = useState(null)
-  const [tokensSold, setTokensSold] = useState(0)
-  const [currentTokens, setCurrentTokens] = useState(0)
-  const [fundsRaised, setFundsRaised] = useState(0)
-  const [fundsForwarded, setFundsForwarded] = useState(0)
-  const [isForwardable, setForwardble] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const [mintVisible, setMintVisible] = useState(false)
-  const [mTitle, setTitle] = useState('')
+  // const { start } = useTimer();
   const [activeKey, setActiveKey] = useState("SiteInfo")
-  const [rate, setRate] = useState(null)
-  const [owner, setOwner] = useState(null)
-  const [name, setName] = useState(null)
-  const [symbol, setSymbol] = useState(null)
-  const [decimals, setDecimals] = useState(null)
-  const [totalSupply, setTotalSupply] = useState(null)
-  const [paused, setPause] = useState(null)
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
@@ -363,121 +305,6 @@ const handleFooterBlockDelBtn = async (id) => {
     window.location = "/admin"
   }
 
-  const handleMint = useCallback(async (e, {address, num}) => {
-    e.preventDefault()
-    e.stopPropagation()
-    const {success, message} = await mint(address, num)
-
-    if (success) {
-      Swal.fire({
-        toast: true,
-        showConfirmButton: false,
-        timer: 3000,
-        icon: "success",
-        title: message,
-      });
-    } else {
-      Swal.fire({
-        toast: true,
-        showConfirmButton: false,
-        timer: 3000,
-        icon: "error",
-        title: message,
-      });
-    }
-  })
-
-  const handleSubmit = useCallback(async (e, val) => {
-    e.preventDefault()
-    e.stopPropagation()
-    let res
-    switch(mTitle) {
-      case "Set an admin":
-        res = await setAdminPermission(val)
-        if (res.success) {
-          Swal.fire({
-            toast: true,
-            showConfirmButton: false,
-            timer: 3000,
-            icon: "success",
-            title: res.message,
-          });
-        } else {
-          Swal.fire({
-            toast: true,
-            showConfirmButton: false,
-            timer: 3000,
-            icon: "error",
-            title: res.message,
-          });
-        }
-        break
-      case "Remove an admin":
-        res = await removeAdminPermission(val)
-        if (res.success) {
-          Swal.fire({
-            toast: true,
-            showConfirmButton: false,
-            timer: 3000,
-            icon: "success",
-            title: res.message,
-          });
-        } else {
-          Swal.fire({
-            toast: true,
-            showConfirmButton: false,
-            timer: 3000,
-            icon: "error",
-            title: res.message,
-          });
-        }
-        break
-      case "Set rate":
-        res = await setTokenRate(val)
-        if (res.success) {
-          Swal.fire({
-            toast: true,
-            showConfirmButton: false,
-            timer: 3000,
-            icon: "success",
-            title: res.message
-          });
-        } else {
-          Swal.fire({
-            toast: true,
-            showConfirmButton: false,
-            timer: 3000,
-            icon: "error",
-            title: res.message,
-          });
-        }
-        break
-    }
-    setVisible(false)
-  }, [mTitle])
-
-  const handleStart = useCallback(async () => {
-    if (crowdSaleStatus) return
-    const {success, message} = await startCrowdSale();
-    if (success) {
-      Swal.fire({
-        toast: true,
-        showConfirmButton: false,
-        timer: 3000,
-        icon: "success",
-        title: message,
-      });
-    } else {
-      Swal.fire({
-        toast: true,
-        showConfirmButton: false,
-        timer: 3000,
-        icon: "error",
-        title: message,
-      });
-    }
-  }, [crowdSaleStatus])
-
   const handleImageSaveBtn = async () => {
     let imagefile = document.getElementById('formFile');
     if (imagefile.files.length > 0) {
@@ -538,7 +365,7 @@ const handleFooterBlockDelBtn = async (id) => {
   }
 
   useEffect(async () => {
-    start();
+    // start();
     let res = await getSetting();
     setSetting(res);
     setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
@@ -558,50 +385,6 @@ const handleFooterBlockDelBtn = async (id) => {
     setFooterBlocks(res);
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      if (time % 5 === 0) {
-        const allPromise = Promise.all([
-          getCurrentTokens(),
-          getTokensSold(),
-          getRaisdFunds(),
-          getForwardedFunds(),
-          getForwardability(),
-          getRate(),
-          getCrowdSaleStatus(),
-          getMintingStatus(),
-          getTotalSupply(),
-          getHistory(),
-        ])
-        try {
-          const lists = await allPromise
-          setCurrentTokens(lists[0])
-          setTokensSold(lists[1])
-          setFundsRaised(lists[2])
-          setFundsForwarded(lists[3])
-          setForwardble(lists[4])
-          setRate(lists[5])
-          setCrowdSaleStatus(lists[6])
-          setPause(lists[7])
-          setTotalSupply(lists[8])
-          setTransactions(lists[9])
-        } catch(e) {
-          console.log(e)
-        }
-      }
-    })()
-  }, [time])
-
-  useEffect(() => {
-    getStaticTokenInfo()
-    .then(res => {
-      setName(res.name)
-      setSymbol(res.symbol)
-      setDecimals(res.decimals)
-      setOwner(res.owner)
-    })
-  }, [])
-
   return (
     <div>
       <CNav variant="tabs">
@@ -610,11 +393,11 @@ const handleFooterBlockDelBtn = async (id) => {
             Site Info
           </CNavLink>
         </CNavItem>
-        <CNavItem>
+        {/* <CNavItem>
           <CNavLink href="#Header" active={activeKey === "Header"} onClick={() => setActiveKey("Header")}>
             Header
           </CNavLink>
-        </CNavItem>
+        </CNavItem> */}
         <CNavItem>
           <CNavLink href="#MainSection" active={activeKey === "MainSection"} onClick={() => setActiveKey("MainSection")}>
             Main Section
@@ -625,11 +408,11 @@ const handleFooterBlockDelBtn = async (id) => {
             About ICO
           </CNavLink>
         </CNavItem>
-        <CNavItem>
+        {/* <CNavItem>
           <CNavLink href="#CrowdSale" active={activeKey === "CrowdSale"} onClick={() => setActiveKey("CrowdSale")}>
             CrowdSale
           </CNavLink>
-        </CNavItem>
+        </CNavItem> */}
         <CNavItem>
           <CNavLink href="#HowItWorks" active={activeKey === "HowItWorks"} onClick={() => setActiveKey("HowItWorks")}>
             How It Works
@@ -684,7 +467,7 @@ const handleFooterBlockDelBtn = async (id) => {
             <CRow>
               <CCol sm="auto">
               <CCard style={{ width: '18rem' }}>
-                <CCardImage orientation="top" src={logoImageURL} />
+                <CCardImage orientation="top" src={logoImageURL.replace("api","backend")} />
                 <CCardBody>
                   <CCardTitle>Logo Image</CCardTitle>
                   <CCardText>
@@ -1810,17 +1593,6 @@ const handleFooterBlockDelBtn = async (id) => {
       </CModalFooter>
       </CModal>
 
-      <PermissionModal
-        visible={visible}
-        title={mTitle}
-        handleSubmit={handleSubmit}
-        hanldeClose={() => setVisible(false)}
-      />
-      <MintModal
-        visible={mintVisible}
-        handleSubmit={handleMint}
-        hanldeClose={() => setMintVisible(false)}
-      />
     </div>
   );
 };
