@@ -49,6 +49,7 @@ const Homepage = () => {
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
+  const [whitepaperFileName, setWhitepaperFileName] = useState('Not selected');
   const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}, footer: {}});
 
   /*  For How Section */
@@ -331,7 +332,16 @@ const handleFooterBlockDelBtn = async (id) => {
   }
 
   const handleWhitepaperSaveBtn = async () => {
-    let res = await saveSetting({whitepaper: setting.whitepaper});
+    let uploadedURL = setting?.whitepaper?.file??"";
+    if (whitepaperFileName !== 'Not selected') {
+      let fileEle = document.getElementById('whitepaperFile');
+
+      if (fileEle.files.length > 0) {
+        uploadedURL = await uploadFile(fileEle.files[0]);
+        uploadedURL = API_URL + uploadedURL;
+      }
+    }
+    let res = await saveSetting({whitepaper: {...setting.whitepaper, file: uploadedURL}});
     setSetting(res);
   }
 
@@ -364,25 +374,28 @@ const handleFooterBlockDelBtn = async (id) => {
     setSetting(res);
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     // start();
-    let res = await getSetting();
-    setSetting(res);
-    setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
-    res = await getBlocks('how');
-    setHowBlocks(res);
-    res = await getBlocks('contact');
-    setContactBlocks(res);
-    res = await getBlocks('faq');
-    setFaqBlocks(res);
-    res = await getBlocks('roadmap');
-    setRoadmapBlocks(res);
-    res = await getBlocks('token');
-    setTokenBlocks(res);
-    res = await getBlocks('team');
-    setTeamBlocks(res);
-    res = await getBlocks('footer');
-    setFooterBlocks(res);
+    async function fetchData() {
+      let res = await getSetting();
+      setSetting(res);
+      setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
+      res = await getBlocks('how');
+      setHowBlocks(res);
+      res = await getBlocks('contact');
+      setContactBlocks(res);
+      res = await getBlocks('faq');
+      setFaqBlocks(res);
+      res = await getBlocks('roadmap');
+      setRoadmapBlocks(res);
+      res = await getBlocks('token');
+      setTokenBlocks(res);
+      res = await getBlocks('team');
+      setTeamBlocks(res);
+      res = await getBlocks('footer');
+      setFooterBlocks(res);
+    }
+    fetchData();
   }, []);
 
   return (
@@ -817,6 +830,30 @@ const handleFooterBlockDelBtn = async (id) => {
               </CCol>
             </CRow>
             <br></br>
+            <CRow>
+              <CCol sm="6">
+                <CCard>
+                  <CCardBody>
+                    <CCardTitle>Whitepaper File</CCardTitle>
+                    <CCardText>
+                      Please upload a whitepaper here.
+                    </CCardText>
+                    <CButton color="success" variant="outline" onClick={() => {document.getElementById('whitepaperFile').click()}}>Upload</CButton>
+                    <CFormInput
+                      type="file"
+                      id="whitepaperFile"
+                      name="whitepaperFile"
+                      style={{display: 'none'}}
+                      onChange={() => {
+                        setWhitepaperFileName(document.getElementById('whitepaperFile')?.files[0]?.name??'Not selected');
+                      }}
+                    />
+                    <div>{whitepaperFileName}</div>
+                  </CCardBody>
+                </CCard>
+              </CCol>
+            </CRow>
+            <br />
             <CRow>
               <CCol sm="auto">
                 <CButton size="lg" onClick={handleWhitepaperSaveBtn}>Save</CButton>
