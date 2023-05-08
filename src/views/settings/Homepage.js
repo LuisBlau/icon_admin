@@ -49,6 +49,8 @@ const Homepage = () => {
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
+  const [faviconFileName, setFaviconFileName] = useState('Not selected');
+  const [faviconImageURL, setFaviconURL] = useState('/images/react400.jpg');
   const [tokenImageFileName, setTokenImageFileName] = useState('Not selected');
   const [tokenImageURL, setTokenImageURL] = useState('');
   const [whitepaperFileName, setWhitepaperFileName] = useState('Not selected');
@@ -316,6 +318,13 @@ const handleFooterBlockDelBtn = async (id) => {
       let res = await saveSetting({logo: API_URL + imageURL});
       setSetting(res);
     }
+    imagefile = document.getElementById('faviconFile');
+    if (imagefile.files.length > 0) {
+      let imageURL = await uploadFile(imagefile.files[0]);
+      setFaviconURL(`${API_URL}${imageURL}`);
+      let res = await saveSetting({favIcon: API_URL + imageURL});
+      setSetting(res);
+    }
   }
 
   const handleHowSaveBtn = async () => {
@@ -391,6 +400,7 @@ const handleFooterBlockDelBtn = async (id) => {
       let res = await getSetting();
       setSetting(res);
       setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
+      setFaviconURL(res.favIcon ? res.favIcon : '');
       setTokenImageURL(res.tokenomics?.file ? res.tokenomics?.file : '');
       res = await getBlocks('how');
       setHowBlocks(res);
@@ -507,6 +517,29 @@ const handleFooterBlockDelBtn = async (id) => {
                     onChange={() => {
                       setLogoImageFileName(document.getElementById('formFile')?.files[0]?.name??'Not selected');
                       setLogoImageURL(URL.createObjectURL(document.getElementById('formFile')?.files[0]));
+                    }}
+                  />
+                  <div>{logoImageFileName}</div>
+                </CCardBody>
+              </CCard>
+              </CCol>
+              <CCol sm="auto">
+              <CCard style={{ width: '18rem' }}>
+                <CCardImage orientation="top" src={faviconImageURL.replace("api","backend")} />
+                <CCardBody>
+                  <CCardTitle>Fav Icon</CCardTitle>
+                  <CCardText>
+                    Please upload a site favicon here.
+                  </CCardText>
+                  <CButton color="success" variant="outline" onClick={() => {document.getElementById('faviconFile').click()}}>Upload</CButton>
+                  <CFormInput
+                    type="file"
+                    id="faviconFile"
+                    name="faviconFile"
+                    style={{display: 'none'}}
+                    onChange={() => {
+                      setFaviconFileName(document.getElementById('faviconFile')?.files[0]?.name??'Not selected');
+                      setFaviconURL(URL.createObjectURL(document.getElementById('faviconFile')?.files[0]));
                     }}
                   />
                   <div>{logoImageFileName}</div>
