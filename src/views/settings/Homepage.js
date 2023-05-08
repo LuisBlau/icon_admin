@@ -542,7 +542,7 @@ const handleFooterBlockDelBtn = async (id) => {
                       setFaviconURL(URL.createObjectURL(document.getElementById('faviconFile')?.files[0]));
                     }}
                   />
-                  <div>{logoImageFileName}</div>
+                  <div>{faviconFileName}</div>
                 </CCardBody>
               </CCard>
               </CCol>
@@ -1274,6 +1274,61 @@ const handleFooterBlockDelBtn = async (id) => {
                 value={setting.footer?.detail}
                 required
                 onChange={(e) => {setSetting({...setting, footer: {...setting.footer, detail: e.target.value}})}}
+                />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="6">
+                <Label for="footer_facebook">Facebook:</Label>
+                <Input type="text" name="footer_facebook" id="footer_facebook" rows="6" placeholder="Enter facebook link"
+                value={setting.footer?.facebook}
+                required
+                onChange={(e) => {setSetting({...setting, footer: {...setting.footer, facebook: e.target.value}})}}
+                />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="6">
+                <Label for="footer_twitter">Twitter:</Label>
+                <Input type="text" name="footer_twitter" id="footer_twitter" rows="6" placeholder="Enter twitter link"
+                value={setting.footer?.twitter}
+                required
+                onChange={(e) => {setSetting({...setting, footer: {...setting.footer, twitter: e.target.value}})}}
+                />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="6">
+                <Label for="footer_googleplus">Google+:</Label>
+                <Input type="text" name="footer_googleplus" id="footer_googleplus" rows="6" placeholder="Enter googleplus link"
+                value={setting.footer?.googleplus}
+                required
+                onChange={(e) => {setSetting({...setting, footer: {...setting.footer, googleplus: e.target.value}})}}
+                />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="6">
+                <Label for="footer_instagram">Instagram:</Label>
+                <Input type="text" name="footer_instagram" id="footer_instagram" rows="6" placeholder="Enter instagram link"
+                value={setting.footer?.instagram}
+                required
+                onChange={(e) => {setSetting({...setting, footer: {...setting.footer, instagram: e.target.value}})}}
+                />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="6">
+                <Label for="footer_linkedin">LinkedIn:</Label>
+                <Input type="text" name="footer_linkedin" id="footer_linkedin" rows="6" placeholder="Enter linkedin link"
+                value={setting.footer?.linkedin}
+                required
+                onChange={(e) => {setSetting({...setting, footer: {...setting.footer, linkedin: e.target.value}})}}
                 />
               </CCol>
             </CRow>
