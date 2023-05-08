@@ -277,11 +277,11 @@ const Homepage = () => {
   /*  For Footer Section */
 const [footerModalVisible, setFooterModalVisible] = useState(false);
 const [footerBlocks, setFooterBlocks] = useState([]);
-const [selectedFooterBlock, setSelectedFooterBlock] = useState({_id: null, title: '', text1: '', text2: '', text3: '', text4: '', text5: '', classBlock: '', classInfo: '', num: ''});
+const [selectedFooterBlock, setSelectedFooterBlock] = useState({_id: null, title: '', text1: '', text2: '', text3: '', text4: '', text5: '', link1: '', link2: '', link3: '', link4: '', link5: '', classBlock: '', classInfo: '', num: ''});
 
 useEffect(() => {
   if (!footerModalVisible) {
-    setSelectedFooterBlock({_id: null, title: '', text1: '', text2: '', text3: '', text4: '', text5: '', classBlock: '', classInfo: '', num: ''});
+    setSelectedFooterBlock({_id: null, title: '', text1: '', text2: '', text3: '', text4: '', text5: '', link1: '', link2: '', link3: '', link4: '', link5: '', classBlock: '', classInfo: '', num: ''});
   }
 }, [footerModalVisible]);
 
@@ -1295,10 +1295,15 @@ const handleFooterBlockDelBtn = async (id) => {
                     <CTableHeaderCell scope="col">#</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Title</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Text1</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Link1</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Text2</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Link2</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Text3</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Link3</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Text4</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Link4</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Text5</CTableHeaderCell>
+                    <CTableHeaderCell scope="col">Link5</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Css For Block</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Css For Info</CTableHeaderCell>
                     <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
@@ -1311,10 +1316,15 @@ const handleFooterBlockDelBtn = async (id) => {
                         <CTableHeaderCell scope="row">{block.num}</CTableHeaderCell>
                         <CTableDataCell>{block.title}</CTableDataCell>
                         <CTableDataCell>{block.text1}</CTableDataCell>
+                        <CTableDataCell>{block.link1}</CTableDataCell>
                         <CTableDataCell>{block.text2}</CTableDataCell>
+                        <CTableDataCell>{block.link2}</CTableDataCell>
                         <CTableDataCell>{block.text3}</CTableDataCell>
+                        <CTableDataCell>{block.link3}</CTableDataCell>
                         <CTableDataCell>{block.text4}</CTableDataCell>
+                        <CTableDataCell>{block.link4}</CTableDataCell>
                         <CTableDataCell>{block.text5}</CTableDataCell>
+                        <CTableDataCell>{block.link5}</CTableDataCell>
                         <CTableDataCell>{block.classBlock}</CTableDataCell>
                         <CTableDataCell>{block.classInfo}</CTableDataCell>
                         <CTableDataCell style={{minWidth: 120}}>
@@ -1629,46 +1639,116 @@ const handleFooterBlockDelBtn = async (id) => {
           value={selectedFooterBlock?.title}
           onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, title: e.target.value})}}
         />
-        <CFormInput
-          type="text"
-          label="Text1"
-          placeholder="Enter text"
-          required
-          value={selectedFooterBlock?.text1}
-          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text1: e.target.value})}}
-        />
-        <CFormInput
-          type="text"
-          label="Text2"
-          placeholder="Enter text"
-          required
-          value={selectedFooterBlock?.text2}
-          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text2: e.target.value})}}
-        />
-        <CFormInput
-          type="text"
-          label="Text3"
-          placeholder="Enter text"
-          required
-          value={selectedFooterBlock?.text3}
-          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text3: e.target.value})}}
-        />
-        <CFormInput
-          type="text"
-          label="Text4"
-          placeholder="Enter text"
-          required
-          value={selectedFooterBlock?.text4}
-          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text4: e.target.value})}}
-        />
-        <CFormInput
-          type="text"
-          label="Text5"
-          placeholder="Enter text"
-          required
-          value={selectedFooterBlock?.text5}
-          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text5: e.target.value})}}
-        />
+        <CRow>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Text1"
+              placeholder="Enter text"
+              required
+              value={selectedFooterBlock?.text1}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text1: e.target.value})}}
+            />
+          </CCol>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Link1"
+              placeholder="Enter link"
+              required
+              value={selectedFooterBlock?.link1}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, link1: e.target.value})}}
+            />
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Text2"
+              placeholder="Enter text"
+              required
+              value={selectedFooterBlock?.text2}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text2: e.target.value})}}
+            />
+          </CCol>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Link2"
+              placeholder="Enter link"
+              required
+              value={selectedFooterBlock?.link2}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, link2: e.target.value})}}
+            />
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Text3"
+              placeholder="Enter text"
+              required
+              value={selectedFooterBlock?.text3}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text3: e.target.value})}}
+            />
+          </CCol>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Link3"
+              placeholder="Enter link"
+              required
+              value={selectedFooterBlock?.link3}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, link3: e.target.value})}}
+            />
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Text4"
+              placeholder="Enter text"
+              required
+              value={selectedFooterBlock?.text4}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text4: e.target.value})}}
+            />
+          </CCol>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Link4"
+              placeholder="Enter link"
+              required
+              value={selectedFooterBlock?.link4}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, link4: e.target.value})}}
+            />
+          </CCol>
+        </CRow>
+        <CRow>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Text5"
+              placeholder="Enter text"
+              required
+              value={selectedFooterBlock?.text5}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, text5: e.target.value})}}
+            />
+          </CCol>
+          <CCol sm='6'>
+            <CFormInput
+              type="text"
+              label="Link5"
+              placeholder="Enter link"
+              required
+              value={selectedFooterBlock?.link5}
+              onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, link5: e.target.value})}}
+            />
+          </CCol>
+        </CRow>
         <CFormInput
           type="text"
           label="Css For Block"
