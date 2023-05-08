@@ -49,6 +49,8 @@ const Homepage = () => {
   const { isAuthenticated } = useContext(AuthContext)
   const [logoImageFileName, setLogoImageFileName] = useState('Not selected');
   const [logoImageURL, setLogoImageURL] = useState('/images/react400.jpg');
+  const [tokenImageFileName, setTokenImageFileName] = useState('Not selected');
+  const [tokenImageURL, setTokenImageURL] = useState('');
   const [whitepaperFileName, setWhitepaperFileName] = useState('Not selected');
   const [setting, setSetting] = useState({how: {}, about: {}, faq: {}, roadmap: {}, tokenomics: {}, whitepaper: {}, team: {}, subscribe: {}, contact: {}, main: {}, footer: {}});
 
@@ -346,7 +348,16 @@ const handleFooterBlockDelBtn = async (id) => {
   }
 
   const handleTokenomicsSaveBtn = async () => {
-    let res = await saveSetting({tokenomics: setting.tokenomics});
+    let uploadedURL = setting?.tokenomics?.file??"";
+    if (tokenImageFileName !== 'Not selected') {
+      let fileEle = document.getElementById('tokenImageFile');
+
+      if (fileEle.files.length > 0) {
+        uploadedURL = await uploadFile(fileEle.files[0]);
+        uploadedURL = API_URL + uploadedURL;
+      }
+    }
+    let res = await saveSetting({tokenomics: {...setting.tokenomics, file: uploadedURL}});
     setSetting(res);
   }
   const handleFaqSaveBtn = async () => {
@@ -380,6 +391,7 @@ const handleFooterBlockDelBtn = async (id) => {
       let res = await getSetting();
       setSetting(res);
       setLogoImageURL(res.logo ? res.logo : '/images/react400.jpg');
+      setTokenImageURL(res.tokenomics?.file ? res.tokenomics?.file : '');
       res = await getBlocks('how');
       setHowBlocks(res);
       res = await getBlocks('contact');
@@ -893,6 +905,32 @@ const handleFooterBlockDelBtn = async (id) => {
                   required
                   onChange={(e) => {setSetting({...setting, tokenomics: {...setting.tokenomics, detail: e.target.value}})}}
                 />
+              </CCol>
+            </CRow>
+            <br></br>
+            <CRow>
+              <CCol sm="6">
+              <CCard>
+                <CCardImage orientation="top" src={tokenImageURL.replace("api","backend")} />
+                <CCardBody>
+                  <CCardTitle>Tokenomics Image</CCardTitle>
+                  <CCardText>
+                    Please upload a image here.
+                  </CCardText>
+                  <CButton color="success" variant="outline" onClick={() => {document.getElementById('tokenImageFile').click()}}>Upload</CButton>
+                  <CFormInput
+                    type="file"
+                    id="tokenImageFile"
+                    name="tokenImageFile"
+                    style={{display: 'none'}}
+                    onChange={() => {
+                      setTokenImageFileName(document.getElementById('tokenImageFile')?.files[0]?.name??'Not selected');
+                      setTokenImageURL(URL.createObjectURL(document.getElementById('tokenImageFile')?.files[0]));
+                    }}
+                  />
+                  <div>{tokenImageFileName}</div>
+                </CCardBody>
+              </CCard>
               </CCol>
             </CRow>
             <br></br>
@@ -1603,8 +1641,8 @@ const handleFooterBlockDelBtn = async (id) => {
           label="Css For Block"
           placeholder="Enter text"
           required
-          value={selectedFooterBlock?.classBlocl}
-          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, classBlocl: e.target.value})}}
+          value={selectedFooterBlock?.classBlock}
+          onChange={(e) => {setSelectedFooterBlock({...selectedFooterBlock, classBlock: e.target.value})}}
         />
         <CFormInput
           type="text"
